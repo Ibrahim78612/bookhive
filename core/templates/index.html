@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>BookHive</title>
-</head>
-<body>
-    <h1>Welcome to BookHive 🐝</h1>
-    <p>Your online book club platform.</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1>Welcome to BookHive</h1>
+    <p class="lead">Discover books. Write reviews. Join clubs.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h4>Browse Books</h4>
+            <p>Search and explore thousands of books.</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h4>Create Reading Lists</h4>
+            <p>Organise your favourite reads.</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h4>Join Book Clubs</h4>
+            <p>Read together and discuss with others.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
