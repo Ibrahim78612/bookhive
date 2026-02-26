@@ -1,6 +1,6 @@
 import json
 from urllib.request import urlopen
-from urllib import HTTPError
+from urllib.error import HTTPError
 
 # convenient work id for purposes of testing
 # points to Hacker's Delight
