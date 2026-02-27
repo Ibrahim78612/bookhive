@@ -15,7 +15,6 @@ def fetch_from_workid(work_id, raise_errors=True):
     Takes in an OpenLibrary ID (of format OL8022414W) and returns title, author(s), date, subjects and description of the book. Passing in raise_errors = False will return None instead of propagating the error (likely will come in handy for lists)
     """
     fetch_url = f"https://openlibrary.org/works/{work_id}.json"
-    print(f"trying to fetch {fetch_url}")
     try:
         book_data = json_from_url(fetch_url)
     except:

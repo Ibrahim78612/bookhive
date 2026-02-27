@@ -9,11 +9,8 @@ def book_list(request):
 
 def book_view(request, work_id):
     try:
-        print(f"fetching book data for {work_id}...")
         book_data = fetch_from_workid(work_id)
-        print(f"fetching cover data for {work_id}...")
         book_cover = cover_from_workid(work_id, is_thumbnail=False)
-        print(book_data, book_cover)
         book_data["cover"] = book_cover
     # TODO: make this redirect to specific error pages
     except Exception as e:
