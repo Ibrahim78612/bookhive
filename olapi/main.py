@@ -1,8 +1,8 @@
 from urllib.error import HTTPError
-from ol_api_helpers import *
+from olapi.ol_api_helpers import *
 
 # convenient work id for purposes of testing
-# points to Hacker's Delight. Notably this work does not have a cover.
+# points to Hacker's Delight. 
 test_workid = "OL8022414W"
 # This is a work id that is syntactically valid but doesn't point anywhere. Good for testing what happens if an invalid work id is entered somewhere. 
 fake_workid = "OL111111111111111111W"
@@ -10,11 +10,12 @@ fake_workid = "OL111111111111111111W"
 # this will cache book data so that we dont need to fetch from internet every time
 
 @check_workid
-def fetch_with_workid(work_id, raise_errors=True):
+def fetch_from_workid(work_id, raise_errors=True):
     """
-    Takes in an OpenLibrary ID (of format OL8022414W) and returns title, author(s), date and subjects of the book. Passing in raise_errors = False will return None instead of propagating the error (likely will come in handy for lists)
+    Takes in an OpenLibrary ID (of format OL8022414W) and returns title, author(s), date, subjects and description of the book. Passing in raise_errors = False will return None instead of propagating the error (likely will come in handy for lists)
     """
     fetch_url = f"https://openlibrary.org/works/{work_id}.json"
+    print(f"trying to fetch {fetch_url}")
     try:
         book_data = json_from_url(fetch_url)
     except:
@@ -24,13 +25,14 @@ def fetch_with_workid(work_id, raise_errors=True):
         key_data = {
             "title": book_data.get("title", "Unknown"),
             "authors": fetch_authors(book_data.get("authors", None)),
-            "date": book_data.get("first_publish_date"),
+            "description": book_data.get("description", "This book has no description."),
+            "date": book_data.get("first_publish_date", "N/A"),
             "subjects": book_data.get("subjects", []),
         }
         return key_data
 
 @check_workid
-def cover_from_workid(work_id, is_thumbnail):
+def cover_from_workid(work_id, is_thumbnail=True):
     """
     Takes in an OpenLibrary ID and returns the url to OpenLibrary's cover (which can then be used as your src in the img tag). Set is_thumbnail to true if the cover's display will be quite small (like in a list). If an error is encountered while fetching, will return None.
     """

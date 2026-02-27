@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div>
+      <img src={{cover}}>
+
+      <h3>{{title}}</h3>
+
+      <b>
+      {% for author in authors %}
+          {{author}} 
+      {% endfor %}
+      </b>
+
+      <p>{{date}}</p>
+      <ul>
+      {% for tag in subjects %}
+          <li>{{tag}}</li>
+      {% endfor %}
+      </ul>
+  </div>
+
+  <div>
+      <h4>About the Book</h4>
+      <p>{{description}}</p>
+      <div>
+          <p>Reviews will go here.</p>
+      </div>
+  </div>
+{% endblock %}⏎  
