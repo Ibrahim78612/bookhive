@@ -134,6 +134,6 @@ def strip_book_data(book_data):
     key_data["covers"] = key_data["covers"][0]
     # filter out junk genres with numbers in them, common quirk of the open library
     subjects = key_data["subjects"]
-    key_data["subjects"] = [subject.lower() for subject in subjects if not any(c.isdigit() for c in subject)]
+    key_data["subjects"] = [subject for subject in subjects if not any((c.isdigit() or c == ",") for c in subject)]
     print(key_data)
     return key_data
