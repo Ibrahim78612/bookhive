@@ -53,10 +53,12 @@
     </div>
 </nav>
 
+{% block content_wrapper %}
 <div class="container mt-4">
     {% block content %}
     {% endblock %}
 </div>
+{% endblock %}
 
 </body>
 </html>
