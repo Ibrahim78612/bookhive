@@ -80,13 +80,16 @@ def use_search_string(func):
 # ---
 
 @try_cache
-def json_from_url(url):
+def json_from_url(url, processing_func=lambda x: x):
     """
     Takes in a URL and tries to parse it as json. If successful, returns the dictionary formed by that json, otherwise errors.
+
+    Can optionally take in a processing function, mainly used to trim down the amount of data in the cache. Whatever the processing function does IS ALSO PUT INTO THE CACHE so be careful with this functionality.
     """
     try:
         response = urlopen(url)
         json_data = json.load(response)
+        json_data = processing_func(json_data)
         return json_data
     except Exception as e:
         raise
@@ -103,14 +106,30 @@ def fetch_authors(author_field):
     if author_field == None: return []
     author_names = []
     for item in author_field:
+        print("i'm getting here...")
         author_id = item["author"]["key"]
         fetch_url = f"https://openlibrary.org{author_id}.json"
         try:
-            author_data = json_from_url(fetch_url)
-            author = author_data.get("name", "Unknown")
+            author = json_from_url(fetch_url, lambda x: x.get("name", "Unknown"))
         except:
             print("Error occured when fetching authors; suppressing")
             author = "Unknown"
         author_names.append(author)
 
     return author_names
+
+# ---
+# PROCESSING FUNCTIONS FOR JSON_FROM_URL
+# ---
+
+def get_from_dict(original, *args):
+    new_dict = {}
+    for key in args:
+        new_dict[key] = original.get(key, None)
+    return new_dict
+
+def strip_book_data(book_data):
+    key_data = get_from_dict(book_data, "title", "authors", "description", "first_publish_date", "subjects", "covers")
+    key_data["authors"] = fetch_authors(key_data["authors"])
+    key_data["covers"] = key_data["covers"][0]
+    return key_data
