@@ -132,4 +132,8 @@ def strip_book_data(book_data):
     key_data = get_from_dict(book_data, "title", "authors", "description", "first_publish_date", "subjects", "covers")
     key_data["authors"] = fetch_authors(key_data["authors"])
     key_data["covers"] = key_data["covers"][0]
+    # filter out junk genres with numbers in them, common quirk of the open library
+    subjects = key_data["subjects"]
+    key_data["subjects"] = [subject.lower() for subject in subjects if not any(c.isdigit() for c in subject)]
+    print(key_data)
     return key_data
