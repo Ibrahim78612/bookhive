@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content_wrapper %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+  .auth-page {
+    position: relative;
+    min-height: 100vh;
+    padding: 80px 0;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+  }
+
+  .glow-orb {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(220, 180, 100, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 20%;
+    left: -10%;
+    z-index: 1;
+  }
+
+  .glow-orb:nth-child(2) {
+    top: 60%;
+    left: 70%;
+    width: 300px;
+    height: 300px;
+  }
+
+  .profile-wrapper {
+    position: relative;
+    width: 500px;
+    z-index: 2;
+  }
+
+  .profile-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 52px 44px;
+    backdrop-filter: blur(20px);
+    border-radius: 8px;
+  }
+
+  .profile-header {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .profile-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(220, 180, 100, 0.7);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .profile-card h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: #f5f0e8;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .profile-card h1 em {
+    font-style: italic;
+    color: rgba(220, 180, 100, 0.9);
+  }
+
+  .profile-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #f5f0e8;
+    margin-top: 30px;
+    margin-bottom: 15px;
+  }
+
+  .profile-card p {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+  }
+
+  .profile-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .profile-card li {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .profile-card li:last-child {
+    border-bottom: none;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(220, 180, 100, 0.8), rgba(220, 180, 100, 0.6));
+    border: none;
+    border-radius: 4px;
+    color: #0a0a0a;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(220, 180, 100, 1), rgba(220, 180, 100, 0.8));
+    transform: translateY(-2px);
+  }
+
+  .divider {
+    border: none;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 30px 0;
+  }
+
+  .footer-links {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .footer-links a {
+    color: rgba(220, 180, 100, 0.7);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    color: rgba(220, 180, 100, 1);
+  }
+
+  .profile-card a {
+    color: rgba(220, 180, 100, 0.7);
+    text-decoration: none;
+  }
+
+  .profile-card a:hover {
+    color: rgba(220, 180, 100, 1);
+  }
+</style>
+
+<div class="auth-page">
+  <div class="bg-grid"></div>
+  <div class="glow-orb"></div>
+  <div class="glow-orb"></div>
+
+  <div class="profile-wrapper">
+    <div class="profile-card">
+      <div class="profile-header">
+        <span class="profile-label">user.username</span>
+        <h1>{{ user.username }}</h1>
+      </div>
+
+      <h2>Clubs</h2>
+      <ul>
+        {% for club in clubs %}
+          <li>{{ club.name }} - {{ club.description }}</li>
+        {% empty %}
+          <li>No clubs joined yet.</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Lists</h2>
+      <ul>
+        {% for list in lists %}
+          <li>{{ list.name }} ({{ list.books.count }} books)</li>
+        {% empty %}
+          <li>No lists created yet.</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Favourite Books</h2>
+      <ul>
+        {% for favourite in favourites %}
+          <li><a href="{% url 'book_view' favourite.book.hardcover_id %}">{{ favourite.book.title }}</a> by {{ favourite.book.author }}</li>
+        {% empty %}
+          <li>No favourite books yet.</li>
+        {% endfor %}
+      </ul>
+
+      <hr class="divider">
+
+      <div class="footer-links">
+        <a href="{% url 'index' %}">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% endblock %}
