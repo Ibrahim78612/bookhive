@@ -106,7 +106,6 @@ def fetch_authors(author_field):
     if author_field == None: return []
     author_names = []
     for item in author_field:
-        print("i'm getting here...")
         author_id = item["author"]["key"]
         fetch_url = f"https://openlibrary.org{author_id}.json"
         try:
