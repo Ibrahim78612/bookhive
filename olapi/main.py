@@ -1,5 +1,6 @@
 from urllib.error import HTTPError
 from olapi.ol_api_helpers import *
+#from ol_api_helpers import *
 
 # convenient work id for purposes of testing
 # points to Hacker's Delight. 
@@ -34,7 +35,7 @@ def cover_from_workid(work_id, is_thumbnail=True):
 
     base = f"https://covers.openlibrary.org/b/id/{book_data['covers']}"
     size = "L"
-    if is_thumbnail: size = "S"
+    if is_thumbnail: size = "M"
 
     return f"{base}-{size}.jpg"
 
@@ -47,5 +48,10 @@ def fetch_with_title(title):
     will be refined later to help with adding search
     """
     fetch_url = "https://openlibrary.org/search.json?q="+title
-    book_data = json_from_url(fetch_url)
-    return book_data
+    print(f"trying to search for {title}")
+    process_docs = lambda x: [strip_search_result_data(i) for i in x["docs"]]
+    try:
+        books_data = json_from_url(fetch_url, processing_func=process_docs)
+    except Exception as e:
+        books_data = None
+    return books_data

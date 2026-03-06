@@ -23,10 +23,10 @@ def validate_workid(work_id):
 
 def search_string(string):
     """
-    Converts a string like "Isn't it wonderful?" to "isnt+it+wonderful"
+    Converts a string like "Isn't_it_wonderful?" to "isnt+it+wonderful"
     """
-    string = "".join([c for c in string.lower() if c.isalnum() or c == " "])
-    string = "+".join(string.split(" "))
+    string = "".join([c for c in string.lower() if c.isalnum() or c == "-"])
+    string = "+".join(string.split("-"))
     return string
 
 # ---
@@ -71,8 +71,10 @@ def use_search_string(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         string = search_string(args[0])
-        args[0] = string
-        return func(*args, **kwargs)
+        use_args = [arg for arg in args]
+        use_args[0] = string
+        use_args = tuple(use_args)
+        return func(*use_args, **kwargs)
     return wrapper
 
 # ---
@@ -133,6 +135,25 @@ def strip_book_data(book_data):
     key_data["covers"] = key_data["covers"][0]
     # filter out junk genres with numbers in them, common quirk of the open library
     subjects = key_data["subjects"]
-    key_data["subjects"] = [subject for subject in subjects if not any((c.isdigit() or c == ",") for c in subject)]
+    key_data["subjects"] = subject_filterer(subjects)
     print(key_data)
     return key_data
+
+def strip_search_result_data(book_data):
+    key_data = get_from_dict(book_data, "title", "author_name", "first_publish_year", "cover_i", "key")
+    key_data["key"] = key_data["key"].split("/")[-1]
+    # rename fields so it is more consistent with strip_book_data
+    rename_field(key_data, "key", "workid")
+    rename_field(key_data, "author_name", "authors")
+    rename_field(key_data, "first_publish_year", "first_publish_date")
+    key_data["cover"] = f"https://covers.openlibrary.org/b/id/{key_data['cover_i']}-S.jpg"
+    return key_data
+
+def subject_filterer(subjects):
+    blacklisted_chars = [c for c in "1234567890,"]
+    subjects = [subject for subject in subjects if not any(c in blacklisted_chars for c in subject)]
+    return subjects
+
+def rename_field(dictionary, old_name, new_name):
+    dictionary[new_name] = dictionary[old_name]
+    del old_name
