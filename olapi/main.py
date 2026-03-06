@@ -48,7 +48,6 @@ def fetch_with_title(title):
     will be refined later to help with adding search
     """
     fetch_url = "https://openlibrary.org/search.json?q="+title
-    print(f"trying to search for {title}")
     process_docs = lambda x: [strip_search_result_data(i) for i in x["docs"]]
     try:
         books_data = json_from_url(fetch_url, processing_func=process_docs)

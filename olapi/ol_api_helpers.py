@@ -25,8 +25,8 @@ def search_string(string):
     """
     Converts a string like "Isn't_it_wonderful?" to "isnt+it+wonderful"
     """
-    string = "".join([c for c in string.lower() if c.isalnum() or c == "-"])
-    string = "+".join(string.split("-"))
+    string = "".join([c for c in string.lower() if c.isalnum() or c == " "])
+    string = "+".join(string.split(" "))
     return string
 
 # ---
@@ -136,7 +136,6 @@ def strip_book_data(book_data):
     # filter out junk genres with numbers in them, common quirk of the open library
     subjects = key_data["subjects"]
     key_data["subjects"] = subject_filterer(subjects)
-    print(key_data)
     return key_data
 
 def strip_search_result_data(book_data):

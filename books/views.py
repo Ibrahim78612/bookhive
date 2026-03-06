@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Book
 from reviews.models import Favourite
 
-from olapi.main import fetch_from_workid, cover_from_workid, fetch_with_title
+from olapi.main import fetch_from_workid, cover_from_workid
 
 def book_list(request):
     books = Book.objects.all()
