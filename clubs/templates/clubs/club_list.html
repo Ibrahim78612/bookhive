@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookhive - Clubs</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .club-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .club-date { color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <h1>Discover Our Clubs</h1>
+
+    {% for club in clubs %}
+        <div class="club-card">
+            <h2>{{ club.name }}</h2>
+            <p class="club-date">Founded on: {{ club.founded_date }}</p>
+            <p>{{ club.description }}</p>
+        </div>
+    {% empty %}
+        <p>No clubs have been created yet. Check back soon!</p>
+    {% endfor %}
+
+</body>
+</html>
