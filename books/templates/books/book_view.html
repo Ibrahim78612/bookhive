@@ -180,7 +180,7 @@
 
       <div class="interaction-container">
         <a href="LINK_PLACEHOLDER">Add to a List</a>
-        <a href="LINK_PLACEHOLDER">Write a Review</a>
+        <a href="{% url 'book_reviews' work_id %}">Write a Review</a>
         {% if user.is_authenticated %}
           {% if is_favourite %}
             <form method="POST" action="{% url 'add_to_favourites' work_id %}">
