@@ -10,6 +10,9 @@ def search(request):
         return redirect("/")
     books_data = fetch_with_title(query)
     context = {
-            "docs": books_data,
-            }
+        "docs": books_data,
+    }
     return render(request, "search.html", context=context)
+
+def clubs(request):
+    return render(request, "clubs/clubs.html")

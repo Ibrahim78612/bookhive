@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content_wrapper %}
+{% block content %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+    .auth-page {
+        position: relative;
+        min-height: 100vh;
+        padding: 100px 0;
+        background: #0a0a0a;
+        overflow: hidden;
+    }
+
+    .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+    }
+
+    .glow-orb {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(220, 180, 100, 0.12) 0%, transparent 70%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 1;
+        }
+    }
+
+    .clubs-wrapper {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .page-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: rgba(220, 180, 100, 0.7);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+        display: block;
+    }
+
+    .page-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 42px;
+        font-weight: 400;
+        color: #f5f0e8;
+    }
+
+    .page-header p {
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 12px;
+    }
+
+    .club-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        padding: 32px;
+        transition: 0.25s;
+        height: 100%;
+    }
+
+    .club-card:hover {
+        border-color: rgba(220, 180, 100, 0.6);
+        transform: translateY(-6px);
+    }
+
+    .club-card h3 {
+        font-family: 'Playfair Display', serif;
+        color: #f5f0e8;
+        margin-bottom: 12px;
+    }
+
+    .club-card p {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 14px;
+    }
+
+    .join-btn {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        background: rgba(220, 180, 100, 0.1);
+        border: 1px solid rgba(220, 180, 100, 0.4);
+        color: rgba(220, 180, 100, 0.9);
+        font-family: 'DM Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .join-btn:hover {
+        background: rgba(220, 180, 100, 0.2);
+        border-color: rgba(220, 180, 100, 0.7);
+    }
+</style>
+
+<div class="auth-page">
+
+    <div class="bg-grid"></div>
+    <div class="glow-orb"></div>
+
+    <div class="clubs-wrapper">
+
+        <div class="page-header">
+            <span class="page-label">Community</span>
+            <h1>Book Clubs</h1>
+            <p>Join readers around the world discussing their favourite books.</p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Fantasy Club</h3>
+                    <p>Explore epic worlds, magic systems and characters with other fantasy readers.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Sci-Fi Society</h3>
+                    <p>Discuss futuristic worlds, advanced technology and mind-bending science fiction.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Romance Readers</h3>
+                    <p>Share heartfelt love stories, emotional journeys, and romantic novels.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Historical Fiction</h3>
+                    <p>Dive into stories set in the past and explore different cultures, wars, and eras.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Philosophy & Ideas</h3>
+                    <p>Discuss books about philosophy, ethics, society, and deep intellectual ideas.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Self Development</h3>
+                    <p>Read and discuss books focused on growth, productivity, mindset and success.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Horror & Dark Fiction</h3>
+                    <p>Explore chilling horror stories, psychological thrillers, and dark narratives.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Young Adult</h3>
+                    <p>Discuss popular YA novels filled with adventure, romance and stories.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="club-card">
+                    <h3>Non Fiction Explorers</h3>
+                    <p>Discover biographies, science, history, and real world stories that inspire.</p>
+                    <button class="join-btn">Join Club</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% endblock %}
