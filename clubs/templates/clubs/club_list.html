@@ -1,27 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bookhive - Clubs</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .club-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .club-date { color: #666; font-size: 0.9em; }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>Discover Our Clubs</h1>
+{% block content %}
+
+<h1 class="mb-4">Book Clubs</h1>
+
+<div class="row">
 
     {% for club in clubs %}
-        <div class="club-card">
-            <h2>{{ club.name }}</h2>
-            <p class="club-date">Founded on: {{ club.founded_date }}</p>
+
+    <div class="col-md-4">
+
+        <div class="card p-3 mb-3">
+
+            <h4>{{ club.name }}</h4>
+
             <p>{{ club.description }}</p>
+
+            <p><b>{{ club.members.count }}</b> members</p>
+
+            <a href="{% url 'club_detail' club.id %}">
+                <button class="btn btn-primary">
+                    View Club
+                </button>
+            </a>
+
         </div>
-    {% empty %}
-        <p>No clubs have been created yet. Check back soon!</p>
+
+    </div>
+
     {% endfor %}
 
-</body>
-</html>
+</div>
+
+{% endblock %}{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="mb-4">Book Clubs</h1>
+
+<div class="row">
+
+    {% for club in clubs %}
+
+    <div class="col-md-4">
+
+        <div class="card p-3 mb-3">
+
+            <h4>{{ club.name }}</h4>
+
+            <p>{{ club.description }}</p>
+
+            <p><b>{{ club.members.count }}</b> members</p>
+
+            <a href="{% url 'club_detail' club.id %}">
+                <button class="btn btn-primary">
+                    View Club
+                </button>
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ club.name }}</h1>
+
+<p>{{ club.description }}</p>
+
+<p><b>{{ club.members.count }}</b> members</p>
+
+
+{% if user.is_authenticated %}
+
+{% if user in club.members.all %}
+
+<a href="{% url 'leave_club' club.id %}">
+    <button class="btn btn-danger">
+        Leave Club
+    </button>
+</a>
+
+{% else %}
+
+<a href="{% url 'join_club' club.id %}">
+    <button class="btn btn-success">
+        Join Club
+    </button>
+</a>
+
+{% endif %}
+
+{% else %}
+
+<a href="/login/">
+    <button class="btn btn-primary">
+        Login to Join
+    </button>
+</a>
+
+{% endif %}
+
+
+<hr>
+
+<h3>Members</h3>
+
+<ul>
+
+    {% for member in club.members.all %}
+
+    <li>{{ member.username }}</li>
+
+    {% empty %}
+
+    <li>No members yet.</li>
+
+    {% endfor %}
+
+</ul>
+
+{% endblock %}

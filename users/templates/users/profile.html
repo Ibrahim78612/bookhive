@@ -4,221 +4,595 @@
 {% block content %}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@300;400;600&display=swap');
 
-  .auth-page {
-    position: relative;
+  :root {
+    --ink: #1c1410;
+    --parchment: #f5ede0;
+    --cream: #fdf8f2;
+    --amber: #c8813a;
+    --amber-light: #e8a85a;
+    --sienna: #8b4513;
+    --sage: #7a8c6e;
+    --rust: #b85c38;
+    --gold: #d4a843;
+    --shadow-warm: rgba(28, 20, 16, 0.15);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .profile-page {
     min-height: 100vh;
-    padding: 80px 0;
-    background: #0a0a0a;
+    background-color: var(--cream);
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    padding: 60px 20px 80px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: flex-start;
+    font-family: 'Crimson Pro', Georgia, serif;
+    position: relative;
+  }
+
+  .profile-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--sienna), var(--amber), var(--gold), var(--amber), var(--sienna));
+    z-index: 100;
+  }
+
+  .profile-layout {
+    width: 100%;
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    background: white;
+    box-shadow:
+      0 2px 4px var(--shadow-warm),
+      0 8px 32px rgba(28, 20, 16, 0.12),
+      0 0 0 1px rgba(200, 129, 58, 0.15);
+    animation: pageReveal 0.9s ease both;
+  }
+
+  @keyframes pageReveal {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .profile-spine {
+    background: var(--ink);
+    background-image: linear-gradient(175deg, #2a1f18 0%, #1c1410 50%, #241a12 100%);
+    padding: 52px 36px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
     overflow: hidden;
   }
 
-  .bg-grid {
+  .profile-spine::before {
+    content: '';
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    z-index: 0;
+    background-image: repeating-linear-gradient(0deg,
+        transparent,
+        transparent 28px,
+        rgba(255, 255, 255, 0.025) 28px,
+        rgba(255, 255, 255, 0.025) 29px);
   }
 
-  .glow-orb {
+  .profile-spine::after {
+    content: '';
     position: absolute;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(220, 180, 100, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-    top: 20%;
-    left: -10%;
+    top: 0;
+    right: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        var(--gold) 15%,
+        var(--amber-light) 50%,
+        var(--gold) 85%,
+        transparent 100%);
+    opacity: 0.6;
+  }
+
+  .spine-ornament {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 8px;
+  }
+
+  .spine-ornament svg {
+    width: 36px;
+    height: 36px;
+    opacity: 0.7;
+  }
+
+  .spine-eyebrow {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    position: relative;
     z-index: 1;
   }
 
-  .glow-orb:nth-child(2) {
-    top: 60%;
-    left: 70%;
-    width: 300px;
-    height: 300px;
-  }
-
-  .profile-wrapper {
+  .spine-username {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--parchment);
+    line-height: 1.25;
     position: relative;
-    width: 500px;
-    z-index: 2;
+    z-index: 1;
+    margin-bottom: 6px;
   }
 
-  .profile-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 52px 44px;
-    backdrop-filter: blur(20px);
-    border-radius: 8px;
-  }
-
-  .profile-header {
-    margin-bottom: 40px;
-    text-align: center;
-  }
-
-  .profile-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: rgba(220, 180, 100, 0.7);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .profile-card h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-weight: 400;
-    color: #f5f0e8;
-    line-height: 1.2;
-    margin: 0;
-  }
-
-  .profile-card h1 em {
+  .spine-username em {
     font-style: italic;
-    color: rgba(220, 180, 100, 0.9);
-  }
-
-  .profile-card h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
     font-weight: 400;
-    color: #f5f0e8;
-    margin-top: 30px;
-    margin-bottom: 15px;
+    color: var(--amber-light);
   }
 
-  .profile-card p {
-    font-family: 'DM Mono', monospace;
+  .spine-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 10px 0;
+    color: rgba(245, 237, 224, 0.45);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 40px;
   }
 
-  .profile-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .spine-rule {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber), transparent);
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
   }
 
-  .profile-card li {
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  .spine-stat {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 24px;
   }
 
-  .profile-card li:last-child {
-    border-bottom: none;
+  .spine-stat-num {
+    font-family: 'Lora', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--amber-light);
+    line-height: 1;
+    margin-bottom: 4px;
   }
 
-  .btn-primary {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, rgba(220, 180, 100, 0.8), rgba(220, 180, 100, 0.6));
-    border: none;
-    border-radius: 4px;
-    color: #0a0a0a;
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 20px;
+  .spine-stat-label {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(245, 237, 224, 0.4);
   }
 
-  .btn-primary:hover {
-    background: linear-gradient(135deg, rgba(220, 180, 100, 1), rgba(220, 180, 100, 0.8));
-    transform: translateY(-2px);
+  .spine-footer {
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
   }
 
-  .divider {
-    border: none;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 30px 0;
+  .back-link {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(212, 168, 67, 0.6);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
   }
 
-  .footer-links {
-    text-align: center;
+  .back-link:hover {
+    color: var(--gold);
+  }
+
+  .back-link::before {
+    content: '←';
     font-size: 12px;
-    color: rgba(255,255,255,0.4);
   }
 
-  .footer-links a {
-    color: rgba(220, 180, 100, 0.7);
+  .profile-content {
+    padding: 52px 48px;
+    background: var(--cream);
+    background-image: linear-gradient(180deg, #fdf8f2 0%, #faf3ea 100%);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .section-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--gold);
+  }
+
+  .section-label {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .clubs-section {
+    margin-bottom: 44px;
+  }
+
+  .clubs-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .club-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: white;
+    border: 1px solid rgba(200, 129, 58, 0.15);
+    border-left: 3px solid var(--amber);
+    transition: all 0.2s ease;
+    cursor: default;
+  }
+
+  .club-item:hover {
+    border-left-color: var(--sienna);
+    box-shadow: 0 2px 12px var(--shadow-warm);
+    transform: translateX(3px);
+  }
+
+  .club-item::before {
+    content: '◆';
+    color: var(--amber);
+    font-size: 8px;
+    flex-shrink: 0;
+  }
+
+  .club-item span {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .books-section {
+    margin-bottom: 44px;
+  }
+
+  .books-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .book-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(200, 129, 58, 0.12);
+    animation: fadeIn 0.4s ease both;
+  }
+
+  .book-item:first-child {
+    border-top: 1px solid rgba(200, 129, 58, 0.12);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .book-item:nth-child(1) {
+    animation-delay: 0ms;
+  }
+
+  .book-item:nth-child(2) {
+    animation-delay: 100ms;
+  }
+
+  .book-item:nth-child(3) {
+    animation-delay: 200ms;
+  }
+
+  .book-item:nth-child(4) {
+    animation-delay: 300ms;
+  }
+
+  .book-item:nth-child(5) {
+    animation-delay: 400ms;
+  }
+
+  .book-item:nth-child(6) {
+    animation-delay: 500ms;
+  }
+
+  .book-item:nth-child(7) {
+    animation-delay: 600ms;
+  }
+
+  .book-item:nth-child(8) {
+    animation-delay: 700ms;
+  }
+
+  .book-item:nth-child(9) {
+    animation-delay: 800ms;
+  }
+
+  .book-num {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(200, 129, 58, 0.45);
+    min-width: 22px;
+    padding-top: 2px;
+    text-align: right;
+  }
+
+  .book-spine-color {
+    width: 4px;
+    height: 44px;
+    background: linear-gradient(180deg, var(--amber), var(--sienna));
+    flex-shrink: 0;
+    border-radius: 1px;
+    opacity: 0.6;
+  }
+
+  .book-info {
+    flex: 1;
+  }
+
+  .book-title-link {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
     text-decoration: none;
+    line-height: 1.3;
+    display: block;
+    margin-bottom: 3px;
+    transition: color 0.2s;
   }
 
-  .footer-links a:hover {
-    color: rgba(220, 180, 100, 1);
+  .book-title-link:hover {
+    color: var(--sienna);
+    text-decoration: underline;
+    text-decoration-color: var(--amber);
+    text-underline-offset: 3px;
   }
 
-  .profile-card a {
-    color: rgba(220, 180, 100, 0.7);
-    text-decoration: none;
+  .book-author {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(28, 20, 16, 0.55);
   }
 
-  .profile-card a:hover {
-    color: rgba(220, 180, 100, 1);
+  .book-heart {
+    font-size: 14px;
+    color: var(--rust);
+    opacity: 0.7;
+    padding-top: 2px;
+  }
+
+  .empty-state {
+    padding: 28px 24px;
+    background: rgba(200, 129, 58, 0.04);
+    border: 1px dashed rgba(200, 129, 58, 0.25);
+    text-align: center;
+  }
+
+  .empty-state p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(28, 20, 16, 0.4);
+  }
+
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 36px 0;
+  }
+
+  .ornament-divider::before,
+  .ornament-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 129, 58, 0.3), transparent);
+  }
+
+  .ornament-divider-glyph {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    color: var(--amber);
+    opacity: 0.6;
   }
 </style>
 
-<div class="auth-page">
-  <div class="bg-grid"></div>
-  <div class="glow-orb"></div>
-  <div class="glow-orb"></div>
+<div class="profile-page">
+  <div class="profile-layout">
 
-  <div class="profile-wrapper">
-    <div class="profile-card">
-      <div class="profile-header">
-        <span class="profile-label">user.username</span>
-        <h1>{{ user.username }}</h1>
+    <aside class="profile-spine">
+
+      <div class="spine-ornament">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 8 C5 8 12 6 20 9 C28 6 35 8 35 8 L35 32 C35 32 28 30 20 33 C12 30 5 32 5 32 Z" stroke="#d4a843"
+            stroke-width="1.5" fill="none" />
+          <line x1="20" y1="9" x2="20" y2="33" stroke="#d4a843" stroke-width="1" opacity="0.5" />
+          <line x1="9" y1="14" x2="18" y2="14" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
+          <line x1="9" y1="18" x2="18" y2="18" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
+          <line x1="9" y1="22" x2="17" y2="22" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
+          <line x1="22" y1="14" x2="31" y2="14" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
+          <line x1="22" y1="18" x2="31" y2="18" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
+          <line x1="22" y1="22" x2="30" y2="22" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
+        </svg>
       </div>
 
-      <h2>Clubs</h2>
-      <ul>
-        {% for club in clubs %}
-          <li>{{ club.name }} - {{ club.description }}</li>
-        {% empty %}
-          <li>No clubs joined yet.</li>
-        {% endfor %}
-      </ul>
+      <div class="spine-eyebrow">Member Profile</div>
 
-      <h2>Lists</h2>
-      <ul>
-        {% for list in lists %}
-          <li>{{ list.name }} ({{ list.books.count }} books)</li>
-        {% empty %}
-          <li>No lists created yet.</li>
-        {% endfor %}
-      </ul>
+      <div class="spine-username">{{ user.username }}</div>
+      <div class="spine-sub">Reader &amp; Curator</div>
 
-      <h2>Favourite Books</h2>
-      <ul>
-        {% for favourite in favourites %}
-          <li><a href="{% url 'book_view' favourite.book.hardcover_id %}">{{ favourite.book.title }}</a> by {{ favourite.book.author }}</li>
-        {% empty %}
-          <li>No favourite books yet.</li>
-        {% endfor %}
-      </ul>
+      <div class="spine-rule"></div>
 
-      <hr class="divider">
-
-      <div class="footer-links">
-        <a href="{% url 'index' %}">← Back to Home</a>
+      <div class="spine-stat">
+        <div class="spine-stat-num">{{ clubs|length }}</div>
+        <div class="spine-stat-label">Clubs Joined</div>
       </div>
-    </div>
+
+      <div class="spine-stat">
+        <div class="spine-stat-num">{{ favourites|length }}</div>
+        <div class="spine-stat-label">Books Loved</div>
+      </div>
+
+      <div class="spine-footer">
+        <a href="{% url 'index' %}" class="back-link">Back to Home</a>
+      </div>
+
+    </aside>
+
+    <main class="profile-content">
+
+      <div class="clubs-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+                stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+          </div>
+          <div>
+            <span class="section-label">Membership</span>
+            <div class="section-title">Your Clubs</div>
+          </div>
+        </div>
+
+        {% if clubs %}
+        <ul class="clubs-list">
+          {% for club in clubs %}
+          <li class="club-item"><span>{{ club.name }}</span></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+          <p>"No clubs yet — every great reader's story has to begin somewhere."</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="ornament-divider">
+        <span class="ornament-divider-glyph">✦</span>
+      </div>
+
+      <div class="books-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"
+                stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+          </div>
+          <div>
+            <span class="section-label">Library</span>
+            <div class="section-title">Favourite Books</div>
+          </div>
+        </div>
+
+        {% if favourites %}
+        <ul class="books-list">
+          {% for favourite in favourites %}
+          <li class="book-item">
+            <span class="book-num">{{ forloop.counter }}</span>
+            <div class="book-spine-color"></div>
+            <div class="book-info">
+              <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">
+                {{ favourite.book.title }}
+              </a>
+              <div class="book-author">{{ favourite.book.author }}</div>
+            </div>
+            <span class="book-heart">♥</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+          <p>"Your favourites shelf awaits its first treasure."</p>
+        </div>
+        {% endif %}
+      </div>
+
+    </main>
   </div>
 </div>
 

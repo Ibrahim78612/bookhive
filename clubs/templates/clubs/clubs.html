@@ -40,7 +40,7 @@
         0%,
         100% {
             transform: translate(-50%, -50%) scale(1);
-            opacity: 0.7;
+            opacity: .7;
         }
 
         50% {
@@ -64,8 +64,8 @@
     .page-label {
         font-family: 'DM Mono', monospace;
         font-size: 10px;
-        letter-spacing: 0.3em;
-        color: rgba(220, 180, 100, 0.7);
+        letter-spacing: .3em;
+        color: rgba(220, 180, 100, .7);
         text-transform: uppercase;
         margin-bottom: 14px;
         display: block;
@@ -79,21 +79,21 @@
     }
 
     .page-header p {
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, .6);
         margin-top: 12px;
     }
 
     .club-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, .03);
+        border: 1px solid rgba(255, 255, 255, .08);
         backdrop-filter: blur(20px);
         padding: 32px;
-        transition: 0.25s;
+        transition: .25s;
         height: 100%;
     }
 
     .club-card:hover {
-        border-color: rgba(220, 180, 100, 0.6);
+        border-color: rgba(220, 180, 100, .6);
         transform: translateY(-6px);
     }
 
@@ -104,7 +104,7 @@
     }
 
     .club-card p {
-        color: rgba(255, 255, 255, 0.65);
+        color: rgba(255, 255, 255, .65);
         font-size: 14px;
     }
 
@@ -112,22 +112,23 @@
         margin-top: 20px;
         width: 100%;
         padding: 12px;
-        background: rgba(220, 180, 100, 0.1);
-        border: 1px solid rgba(220, 180, 100, 0.4);
-        color: rgba(220, 180, 100, 0.9);
+        background: rgba(220, 180, 100, .1);
+        border: 1px solid rgba(220, 180, 100, .4);
+        color: rgba(220, 180, 100, .9);
         font-family: 'DM Mono', monospace;
         font-size: 11px;
-        letter-spacing: 0.25em;
+        letter-spacing: .25em;
         text-transform: uppercase;
         cursor: pointer;
-        transition: 0.2s;
+        transition: .2s;
     }
 
     .join-btn:hover {
-        background: rgba(220, 180, 100, 0.2);
-        border-color: rgba(220, 180, 100, 0.7);
+        background: rgba(220, 180, 100, .2);
+        border-color: rgba(220, 180, 100, .7);
     }
 </style>
+
 
 <div class="auth-page">
 
@@ -144,80 +145,48 @@
 
         <div class="row g-4">
 
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Fantasy Club</h3>
-                    <p>Explore epic worlds, magic systems and characters with other fantasy readers.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
+            {% for club in clubs %}
 
             <div class="col-md-4">
                 <div class="club-card">
-                    <h3>Sci-Fi Society</h3>
-                    <p>Discuss futuristic worlds, advanced technology and mind-bending science fiction.</p>
-                    <button class="join-btn">Join Club</button>
+
+                    <h3>{{ club.name }}</h3>
+                    <p>{{ club.description }}</p>
+
+                    <p>{{ club.members.count }} members</p>
+
+                    {% if user.is_authenticated %}
+
+                    {% if user in club.members.all %}
+
+                    <form method="POST" action="{% url 'leave_club' club.id %}">
+                        {% csrf_token %}
+                        <button class="join-btn">Leave Club</button>
+                    </form>
+
+                    {% else %}
+
+                    <form method="POST" action="{% url 'join_club' club.id %}">
+                        {% csrf_token %}
+                        <button class="join-btn">Join Club</button>
+                    </form>
+
+                    {% endif %}
+
+                    {% else %}
+
+                    <a href="{% url 'login' %}">
+                        <button class="join-btn">Login to Join</button>
+                    </a>
+
+                    {% endif %}
+
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Romance Readers</h3>
-                    <p>Share heartfelt love stories, emotional journeys, and romantic novels.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Historical Fiction</h3>
-                    <p>Dive into stories set in the past and explore different cultures, wars, and eras.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Philosophy & Ideas</h3>
-                    <p>Discuss books about philosophy, ethics, society, and deep intellectual ideas.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Self Development</h3>
-                    <p>Read and discuss books focused on growth, productivity, mindset and success.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Horror & Dark Fiction</h3>
-                    <p>Explore chilling horror stories, psychological thrillers, and dark narratives.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Young Adult</h3>
-                    <p>Discuss popular YA novels filled with adventure, romance and stories.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="club-card">
-                    <h3>Non Fiction Explorers</h3>
-                    <p>Discover biographies, science, history, and real world stories that inspire.</p>
-                    <button class="join-btn">Join Club</button>
-                </div>
-            </div>
+            {% endfor %}
 
         </div>
-
     </div>
 </div>
 
