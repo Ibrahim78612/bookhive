@@ -131,11 +131,14 @@ def get_from_dict(original, *args):
 
 def strip_book_data(book_data):
     key_data = get_from_dict(book_data, "title", "authors", "description", "first_publish_date", "subjects", "covers")
-    key_data["authors"] = fetch_authors(key_data["authors"])
-    key_data["covers"] = key_data["covers"][0]
+    if key_data["authors"] is not None:
+        key_data["authors"] = fetch_authors(key_data["authors"])
+    if key_data["covers"] is not None:
+        key_data["covers"] = key_data["covers"][0]
     # filter out junk genres with numbers in them, common quirk of the open library
-    subjects = key_data["subjects"]
-    key_data["subjects"] = subject_filterer(subjects)
+    if key_data["subjects"] is not None:
+        subjects = key_data["subjects"]
+        key_data["subjects"] = subject_filterer(subjects)
     return key_data
 
 def strip_search_result_data(book_data):

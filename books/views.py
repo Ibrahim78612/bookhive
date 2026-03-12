@@ -15,7 +15,7 @@ def book_view(request, work_id):
         book_cover = cover_from_workid(work_id, is_thumbnail=False)
         book_data["cover"] = book_cover
         book_data["work_id"] = work_id
-        book_data["reviews"] = [];
+        book_data["reviews"] = None;
 
         # Check if book is in user's favourites
         if request.user.is_authenticated:
@@ -33,7 +33,7 @@ def book_view(request, work_id):
             book_obj = Book.objects.get(hardcover_id=work_id)
             book_data["reviews"] = Review.objects.filter(book=book_obj)
         except:
-            pass
+            pass # if book or reviews couldn't be fetched, this doesn't ultimately matter
     # TODO: make this redirect to specific error pages
     except Exception as e:
         print(f"couldn't retrieve, {e}")
