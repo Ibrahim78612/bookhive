@@ -15,17 +15,26 @@
     }
     a {
       color: rgba(220,180,100,1.0);
+      font-family: 'Playfair Display', serif;
+    }
+    body {
+      background-color: #0a0a0a;
     }
     .shelf {
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03), 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03), 1px, transparent 1px);
+      background-size: 60px 60px;
     }
     .book {
       display: flex;
       flex-direction: row;
       width: 70%;
-      backdrop-filter: blur(5px);
+      height: 120px;
+      backdrop-filter: blur(2px);
       padding: 5px;
       margin: 5px;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -40,13 +49,19 @@
       <div class="book">
         <img src={{ book.cover }}>
         <div class="book-metadata">
-          <a href="/books/{{ book.workid }}">{{ book.title }}</a>
+          <a href="/books/{{ book.workid }}">
+            {{ book.title }}
+            {% if book.first_publish_year %}
+                ({{ book.first_publish_year }})
+            {% endif %}
+          </a>
           <p>
+            {% if book.authors %}
             {% for author in book.authors %}
               {{author}} 
             {% endfor %}
+            {% endif %}
           </p>
-        <p>{{ book.first_publish_year }}</p>
         </div>
       </div>
     {% endfor %}

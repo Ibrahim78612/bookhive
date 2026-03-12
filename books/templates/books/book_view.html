@@ -229,8 +229,8 @@
       </div>
       <div class="header-bg"><h4>Reviews</h4></div>
       <div class="review-container">
-          {% if reviews %}
-            {% for review in reviews %}
+        {% if reviews %}
+          {% for review in reviews %}
             <div class="review">
             <b class="authors">{{ review.reviewer.username }}</b>
             <div class="review-meta">
@@ -238,10 +238,10 @@
             </div>
             <p>{{ review.comment }}</p>
             </div>
-            {% endfor %}
-          {% else %}
+          {% endfor %}
+        {% else %}
           <p>No reviews yet.</p>
-          {% endif %}
+        {% endif %}
 
       </div>
   </div>

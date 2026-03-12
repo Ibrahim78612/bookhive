@@ -15,7 +15,7 @@ def book_view(request, work_id):
         book_cover = cover_from_workid(work_id, is_thumbnail=False)
         book_data["cover"] = book_cover
         book_data["work_id"] = work_id
-
+        book_data["reviews"] = [];
 
         # Check if book is in user's favourites
         if request.user.is_authenticated:
@@ -29,14 +29,16 @@ def book_view(request, work_id):
             book_data["is_favourite"] = is_favourite
             book_data["favourite_count"] = favourite_count
             book_data["favourite_limit"] = 5
-            try:
-                book_data["reviews"] = Review.objects.filter(book=book_obj)
-            except Review.DoesNotExist:
-                book_data["reviews"] = None
+        try:
+            book_obj = Book.objects.get(hardcover_id=work_id)
+            book_data["reviews"] = Review.objects.filter(book=book_obj)
+        except:
+            pass
     # TODO: make this redirect to specific error pages
     except Exception as e:
         print(f"couldn't retrieve, {e}")
         return redirect('/')
+    print(book_data)
     return render(request, "books/book_view.html", context=book_data)
 
 @login_required
