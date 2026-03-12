@@ -14,6 +14,8 @@ def book_view(request, work_id):
         book_data = fetch_from_workid(work_id)
         book_cover = cover_from_workid(work_id, is_thumbnail=False)
         book_data["cover"] = book_cover
+        book_data["work_id"] = work_id
+        print(book_data)
         
         # Check if book is in user's favourites
         if request.user.is_authenticated:

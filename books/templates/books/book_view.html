@@ -166,17 +166,24 @@
       <h2 class="title">{{title}}</h2>
 
       <b class="authors">
+      {% if authors %}
       {% for author in authors %}
           {{author}} 
       {% endfor %}
+      {% endif %}
       </b>
 
+      {% if first_publish_date %}
       <p>{{first_publish_date}}</p>
+      {% endif %}
+
+      {% if subjects %}
       <ul class="tags">
       {% for tag in subjects %}
           <li>{{tag}}</li>
       {% endfor %}
       </ul>
+      {% endif %}
 
       <div class="interaction-container">
         <a href="LINK_PLACEHOLDER">Add to a List</a>
