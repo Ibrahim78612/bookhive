@@ -155,6 +155,20 @@
     .interaction-container a {
       color: rgba(220, 180, 100, 0.8);
     }
+
+    .review-meta {
+      display: flex;
+      flex-direction: row;
+      float: right;
+    }
+
+    .review-meta p {
+      margin-right: 20px;
+    }
+
+    .review-meta b {
+      margin-right: 30px;
+    }
     
   </style>
 
@@ -186,9 +200,9 @@
       {% endif %}
 
       <div class="interaction-container">
+        {% if user.is_authenticated %}
         <a href="LINK_PLACEHOLDER">Add to a List</a>
         <a href="{% url 'book_reviews' work_id %}">Write a Review</a>
-        {% if user.is_authenticated %}
           {% if is_favourite %}
             <form method="POST" action="{% url 'add_to_favourites' work_id %}">
               {% csrf_token %}
@@ -215,7 +229,20 @@
       </div>
       <div class="header-bg"><h4>Reviews</h4></div>
       <div class="review-container">
-          <p>Reviews will go here.</p>
+          {% if reviews %}
+            {% for review in reviews %}
+            <div class="review">
+            <b class="authors">{{ review.reviewer.username }}</b>
+            <div class="review-meta">
+              <p>{{ review.rating }}</p><p>{{ review.created_at }}</p>
+            </div>
+            <p>{{ review.comment }}</p>
+            </div>
+            {% endfor %}
+          {% else %}
+          <p>No reviews yet.</p>
+          {% endif %}
+
       </div>
   </div>
   </div>

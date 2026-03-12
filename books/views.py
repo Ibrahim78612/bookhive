@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Book
-from reviews.models import Favourite
+from reviews.models import Favourite, Review
 
 from olapi.main import fetch_from_workid, cover_from_workid
 
@@ -15,8 +15,8 @@ def book_view(request, work_id):
         book_cover = cover_from_workid(work_id, is_thumbnail=False)
         book_data["cover"] = book_cover
         book_data["work_id"] = work_id
-        print(book_data)
-        
+
+
         # Check if book is in user's favourites
         if request.user.is_authenticated:
             try:
@@ -29,6 +29,10 @@ def book_view(request, work_id):
             book_data["is_favourite"] = is_favourite
             book_data["favourite_count"] = favourite_count
             book_data["favourite_limit"] = 5
+            try:
+                book_data["reviews"] = Review.objects.filter(book=book_obj)
+            except Review.DoesNotExist:
+                book_data["reviews"] = None
     # TODO: make this redirect to specific error pages
     except Exception as e:
         print(f"couldn't retrieve, {e}")
