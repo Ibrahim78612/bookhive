@@ -9,10 +9,8 @@ def list_detail(request, list_id):
     list_obj = get_object_or_404(List, id=list_id)
     can_edit = request.user.is_authenticated and list_obj.can_edit(request.user)
 
-    # Allow viewing if user created it, or if it's a club list and user is member (or anonymous)
-    if not (list_obj.user == request.user or (list_obj.club and request.user in list_obj.club.members.all()) or not request.user.is_authenticated):
-        # For anonymous, allow viewing public lists? But since no public/private, allow all for now
-        pass  # Allow viewing
+    # Allow viewing for everyone (public by default)
+    # Editing only for list owner (or club owner for club lists)
 
     if request.method == 'POST' and can_edit:
         if 'add_book' in request.POST:
@@ -40,6 +38,47 @@ def list_detail(request, list_id):
     return render(request, 'lists/list_detail.html', {
         'list': list_obj,
         'can_edit': can_edit,
+    })
+
+@login_required
+def edit_list(request, list_id):
+    list_obj = get_object_or_404(List, id=list_id)
+
+    if not list_obj.can_edit(request.user):
+        messages.error(request, "You don't have permission to edit this list.")
+        return redirect('list_detail', list_id=list_id)
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description', '')
+        if not name:
+            messages.error(request, "List name is required.")
+        else:
+            list_obj.name = name
+            list_obj.description = description
+            list_obj.save()
+            messages.success(request, "List updated.")
+            return redirect('list_detail', list_id=list_id)
+
+    return render(request, 'lists/edit_list.html', {
+        'list': list_obj,
+    })
+
+@login_required
+def delete_list(request, list_id):
+    list_obj = get_object_or_404(List, id=list_id)
+
+    if not list_obj.can_edit(request.user):
+        messages.error(request, "You don't have permission to delete this list.")
+        return redirect('list_detail', list_id=list_id)
+
+    if request.method == 'POST':
+        list_obj.delete()
+        messages.success(request, "List deleted.")
+        return redirect('profile')
+
+    return render(request, 'lists/delete_list.html', {
+        'list': list_obj,
     })
 
 @login_required

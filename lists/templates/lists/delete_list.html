@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content_wrapper %}
+{% block content %}
+
+<div class="delete-list-page">
+  <h1>Delete List</h1>
+  <p>Are you sure you want to delete the list <strong>{{ list.name }}</strong>? This cannot be undone.</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete this list</button>
+    <a href="{% url 'list_detail' list.id %}">Cancel</a>
+  </form>
+</div>
+
+{% endblock %}
+{% endblock %}

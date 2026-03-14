@@ -163,6 +163,31 @@
     margin-bottom: 40px;
   }
 
+  .friend-button {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+
+  .friend-button button {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--amber-light);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .friend-button button:hover {
+    background: var(--amber);
+  }
+
   .spine-rule {
     width: 40px;
     height: 2px;
@@ -569,24 +594,38 @@
 
       <div class="spine-eyebrow">Member Profile</div>
 
-      <div class="spine-username">{{ user.username }}</div>
+      <div class="spine-username">{{ profile_user.username }}</div>
+      {% if not is_owner and user.is_authenticated %}
+        <div class="friend-button">
+          {% if friend_status == 'accepted' %}
+            {% url "unfriend" profile_user.username as unfriend_url %}
+            <button onclick='if(confirm("Are you sure you want to unfriend {{ profile_user.username|escapejs }}?")) { window.location.href = "{{ unfriend_url }}"; }'>Friends</button>
+          {% elif friend_status == 'pending' %}
+            {% url "send_friend_request" profile_user.username as send_url %}
+            <button onclick='window.location.href = "{{ send_url }}";'>Request Sent</button>
+          {% else %}
+            {% url "send_friend_request" profile_user.username as send_url %}
+            <button onclick='window.location.href = "{{ send_url }}";'>Send Friend Request</button>
+          {% endif %}
+        </div>
+      {% endif %}
       <div class="spine-sub">Reader &amp; Curator</div>
 
       <div class="spine-rule"></div>
 
       <div class="spine-stat">
         <div class="spine-stat-num">{{ clubs|length }}</div>
-        <div class="spine-stat-label">Clubs Joined</div>
+        <div class="spine-stat-label">Clubs</div>
       </div>
 
       <div class="spine-stat">
         <div class="spine-stat-num">{{ personal_lists|length }}</div>
-        <div class="spine-stat-label">Lists Created</div>
+        <div class="spine-stat-label">Lists</div>
       </div>
 
       <div class="spine-stat">
-        <div class="spine-stat-num">{{ favourites|length }}</div>
-        <div class="spine-stat-label">Books Loved</div>
+        <div class="spine-stat-num">{{ reviews|length }}</div>
+        <div class="spine-stat-label">Reviews</div>
       </div>
 
       <div class="spine-footer">
@@ -608,7 +647,7 @@
           </div>
           <div>
             <span class="section-label">Membership</span>
-            <div class="section-title">Your Clubs</div>
+            <div class="section-title">Clubs</div>
           </div>
         </div>
 
@@ -620,7 +659,7 @@
         </ul>
         {% else %}
         <div class="empty-state">
-          <p>"No clubs yet — every great reader's story has to begin somewhere."</p>
+          <p>"No clubs yet."</p>
         </div>
         {% endif %}
       </div>
@@ -638,13 +677,15 @@
           </div>
           <div>
             <span class="section-label">Collections</span>
-            <div class="section-title">Your Lists</div>
+            <div class="section-title">Lists</div>
           </div>
         </div>
 
+        {% if is_owner %}
         <div class="create-list-link">
           <a href="{% url 'create_list' %}">Create New List</a>
         </div>
+        {% endif %}
 
         {% if personal_lists or club_lists %}
         <ul class="lists-list">
@@ -652,18 +693,24 @@
           <li class="list-item">
             <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
             <span>(Personal - {{ list.books.count }} books)</span>
+            {% if is_owner %}
+            <a class="list-edit-link" href="{% url 'edit_list' list.id %}">Edit</a>
+            {% endif %}
           </li>
           {% endfor %}
           {% for list in club_lists %}
           <li class="list-item">
             <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
             <span>({{ list.club.name }} - {{ list.books.count }} books)</span>
+            {% if is_owner %}
+            <a class="list-edit-link" href="{% url 'edit_list' list.id %}">Edit</a>
+            {% endif %}
           </li>
           {% endfor %}
         </ul>
         {% else %}
         <div class="empty-state">
-          <p>"Start your first reading list — every book lover needs one."</p>
+          <p>"Start your first reading list."</p>
         </div>
         {% endif %}
       </div>
@@ -704,7 +751,45 @@
         </ul>
         {% else %}
         <div class="empty-state">
-          <p>"Your favourites shelf awaits its first treasure."</p>
+          <p>"Your favourites."</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="ornament-divider">
+        <span class="ornament-divider-glyph">✦</span>
+      </div>
+
+      <div class="reviews-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+          </div>
+          <div>
+            <span class="section-label">Thoughts</span>
+            <div class="section-title">Reviews</div>
+          </div>
+        </div>
+
+        {% if reviews %}
+        <ul class="reviews-list">
+          {% for review in reviews %}
+          <li class="review-item">
+            <div class="review-book">
+              <a href="{% url 'book_view' review.book.hardcover_id %}" class="review-book-title">{{ review.book.title }}</a>
+              <div class="review-book-author">by {{ review.book.author }}</div>
+            </div>
+            <div class="review-rating">★ {{ review.rating }}/5</div>
+            <div class="review-comment">{{ review.comment }}</div>
+            <div class="review-date">{{ review.created_at|date:"M j, Y" }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+          <p>"No reviews yet."</p>
         </div>
         {% endif %}
       </div>

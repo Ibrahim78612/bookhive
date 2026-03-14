@@ -10,6 +10,9 @@
     <p>{{ list.description }}</p>
     {% endif %}
     <p>Created by {{ list.user.username }}{% if list.club %} for club {{ list.club.name }}{% endif %}</p>
+    {% if can_edit %}
+    <p><a href="{% url 'edit_list' list.id %}">Edit this list</a> · <a href="{% url 'delete_list' list.id %}">Delete this list</a></p>
+    {% endif %}
   </div>
 
   {% if can_edit %}

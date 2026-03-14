@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content_wrapper %}
+{% block content %}
+
+<div class="edit-list-page">
+  <h1>Edit List</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="name">List Name:</label>
+    <input type="text" id="name" name="name" value="{{ list.name }}" required>
+
+    <label for="description">Description (optional):</label>
+    <textarea id="description" name="description">{{ list.description }}</textarea>
+
+    <button type="submit">Save Changes</button>
+    <a href="{% url 'list_detail' list.id %}">Cancel</a>
+  </form>
+</div>
+
+{% endblock %}
+{% endblock %}
