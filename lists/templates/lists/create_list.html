@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content_wrapper %}
+{% block content %}
+
+<div class="create-list-page">
+  <h1>Create New List</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="name">List Name:</label>
+    <input type="text" id="name" name="name" required>
+    <label for="description">Description (optional):</label>
+    <textarea id="description" name="description"></textarea>
+    <button type="submit">Create List</button>
+  </form>
+</div>
+
+{% endblock %}
+{% endblock %}

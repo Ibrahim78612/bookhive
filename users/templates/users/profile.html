@@ -314,6 +314,75 @@
     color: var(--ink);
   }
 
+  .lists-section {
+    margin-bottom: 44px;
+  }
+
+  .lists-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .list-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: white;
+    border: 1px solid rgba(200, 129, 58, 0.15);
+    border-left: 3px solid var(--amber);
+    transition: all 0.2s ease;
+  }
+
+  .list-item:hover {
+    border-left-color: var(--sienna);
+    box-shadow: 0 2px 12px var(--shadow-warm);
+    transform: translateX(3px);
+  }
+
+  .list-item a {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .list-item a:hover {
+    color: var(--sienna);
+  }
+
+  .list-item span {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(28, 20, 16, 0.55);
+  }
+
+  .create-list-link {
+    margin-bottom: 16px;
+  }
+
+  .create-list-link a {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--amber);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--amber);
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .create-list-link a:hover {
+    background: var(--amber);
+    color: white;
+  }
+
   .books-section {
     margin-bottom: 44px;
   }
@@ -511,6 +580,11 @@
       </div>
 
       <div class="spine-stat">
+        <div class="spine-stat-num">{{ personal_lists|length }}</div>
+        <div class="spine-stat-label">Lists Created</div>
+      </div>
+
+      <div class="spine-stat">
         <div class="spine-stat-num">{{ favourites|length }}</div>
         <div class="spine-stat-label">Books Loved</div>
       </div>
@@ -547,6 +621,49 @@
         {% else %}
         <div class="empty-state">
           <p>"No clubs yet — every great reader's story has to begin somewhere."</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="ornament-divider">
+        <span class="ornament-divider-glyph">✦</span>
+      </div>
+
+      <div class="lists-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+          </div>
+          <div>
+            <span class="section-label">Collections</span>
+            <div class="section-title">Your Lists</div>
+          </div>
+        </div>
+
+        <div class="create-list-link">
+          <a href="{% url 'create_list' %}">Create New List</a>
+        </div>
+
+        {% if personal_lists or club_lists %}
+        <ul class="lists-list">
+          {% for list in personal_lists %}
+          <li class="list-item">
+            <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
+            <span>(Personal - {{ list.books.count }} books)</span>
+          </li>
+          {% endfor %}
+          {% for list in club_lists %}
+          <li class="list-item">
+            <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
+            <span>({{ list.club.name }} - {{ list.books.count }} books)</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+          <p>"Start your first reading list — every book lover needs one."</p>
         </div>
         {% endif %}
       </div>

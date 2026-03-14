@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from .models import Club
 from .forms import ClubForm
+from lists.models import List
 
 def club_list(request):
     dataset = Club.objects.all() 
@@ -36,6 +37,8 @@ def club_create(request):
             club.owner = request.user
             club.save()
             club.members.add(request.user)
+            # Create list for the club
+            List.objects.create(user=request.user, club=club, name=f"{club.name} Reading List", description=f"Shared reading list for {club.name} club")
             return redirect("club_detail", id=club.id)
     else:
         form = ClubForm()

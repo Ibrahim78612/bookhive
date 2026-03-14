@@ -204,7 +204,17 @@
 
       <div class="interaction-container">
         {% if user.is_authenticated %}
-        <a href="LINK_PLACEHOLDER">Add to a List</a>
+        <form method="post" action="{% url 'add_book_to_list' work_id %}" class="add-to-list-form">
+          {% csrf_token %}
+          <label for="list_id">Add to list:</label>
+          <select name="list_id" id="list_id" required>
+            <option value="" disabled selected>Select a list</option>
+            {% for list in user_lists %}
+            <option value="{{ list.id }}">{{ list.name }}{% if list.club %} ({{ list.club.name }}){% endif %}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Add</button>
+        </form>
         <a href="{% url 'book_reviews' work_id %}">Write a Review</a>
           {% if is_favourite %}
             <form method="POST" action="{% url 'add_to_favourites' work_id %}">

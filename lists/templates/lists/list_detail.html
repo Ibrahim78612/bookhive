@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content_wrapper %}
+{% block content %}
+
+<div class="list-page">
+  <div class="list-header">
+    <h1>{{ list.name }}</h1>
+    {% if list.description %}
+    <p>{{ list.description }}</p>
+    {% endif %}
+    <p>Created by {{ list.user.username }}{% if list.club %} for club {{ list.club.name }}{% endif %}</p>
+  </div>
+
+  {% if can_edit %}
+  <div class="add-book-form">
+    <h2>Add Book</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="text" name="book_id" placeholder="Enter book hardcover_id" required>
+      <button type="submit" name="add_book">Add Book</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="books-list">
+    <h2>Books in this list</h2>
+    {% if list.books.all %}
+    <ul>
+      {% for book in list.books.all %}
+      <li>
+        <a href="{% url 'book_view' book.hardcover_id %}">{{ book.title }}</a> by {{ book.author }}
+        {% if can_edit %}
+        <form method="post" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="remove_book_id" value="{{ book.hardcover_id }}">
+          <button type="submit" name="remove_book">Remove</button>
+        </form>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No books in this list yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+{% endblock %}

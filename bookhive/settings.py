@@ -81,7 +81,8 @@ WSGI_APPLICATION = 'bookhive.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # Django 2.2 expects a string path; Path objects can cause sqlite backend errors.
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 
