@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    
+    <h1 class="mb-4">{{ action }} Club</h1>
+    
+    <div>
+        <form method="POST">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">{{ action }} Club</button>
+                
+                {% if action == 'Edit' %}
+                    <a href="{% url 'club_detail' club.id %}" class="btn btn-secondary">Cancel</a>
+                {% else %}
+                    <a href="{% url 'club_list' %}" class="btn btn-secondary">Cancel</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    
+</div>
+{% endblock %}
