@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+
 from olapi.main import fetch_with_title
-from core.search_converter import fetch_title_to_search
+from core.search_converter import *
 
 def index(request):
     return render(request, "index.html")
@@ -9,16 +11,17 @@ def index(request):
 def search(request):
     query = request.GET.get('query', '')
     # default search type
-    search_type = request.GET.get('type', 'books')
-    if query == '':
+    search_type = request.GET.get('type', '')
+    allowed_search_types = ['book_view', 'profile']
+
+    if query == '' or search_type not in allowed_search_types:
         return redirect("/")
 
     data = None
-    if search_type == 'books':
+    if search_type == 'book_view':
         data = fetch_title_to_search(fetch_with_title(query))
-        print(data)
-    # if search_type == 'users':
-    # data = Users.objects.search(query)
+    if search_type == 'profile':
+        data = user_data_to_search(User.objects.filter(username__contains=query))
 
     context = {
         "query": query,

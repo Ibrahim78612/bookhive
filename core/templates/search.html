@@ -49,7 +49,7 @@
       <div class="item">
         <img src={{ item.image }}>
         <div class="metadata">
-          <a href="/books/{{ item.id }}">
+          <a href="{% url to_page item.id %}">
             {{ item.title }}
           </a>
             {% for metadata in item.meta %}
