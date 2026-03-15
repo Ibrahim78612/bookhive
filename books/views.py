@@ -48,7 +48,6 @@ def book_view(request, work_id):
     except Exception as e:
         print(f"couldn't retrieve, {e}")
         return redirect('/')
-    print(book_data)
     return render(request, "books/book_view.html", context=book_data)
 
 @login_required

@@ -149,7 +149,7 @@ def strip_search_result_data(book_data):
     rename_field(key_data, "author_name", "authors")
     rename_field(key_data, "first_publish_year", "first_publish_date")
     if key_data["cover_i"] != None:
-        key_data["cover"] = f"https://covers.openlibrary.org/b/id/{key_data['cover_i']}-S.jpg"
+        key_data["cover"] = f"https://covers.openlibrary.org/b/id/{key_data['cover_i']}-M.jpg"
     else:
         key_data["cover"] = None
     return key_data

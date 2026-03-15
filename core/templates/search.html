@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content_wrapper %}
 {% block content %}
@@ -19,6 +20,14 @@
     }
     body {
       background-color: #0a0a0a;
+    }
+    .imgdiv {
+      width: 10%;
+      height: 20%;
+    }
+    .imgdiv img {
+      width: 100%;
+      height: 100%;
     }
     .shelf {
       display: flex;
@@ -47,7 +56,11 @@
   <div class="shelf">
     {% for item in docs %}
       <div class="item">
-        <img src={{ item.image }}>
+        {% if item.image %}
+        <div class="imgdiv"><img src={{ item.image }}></div>
+        {% else %}
+        <div class="imgdiv"><img src="{% static to_page %}"></div>
+        {% endif %}
         <div class="metadata">
           <a href="{% url to_page item.id %}">
             {{ item.title }}
