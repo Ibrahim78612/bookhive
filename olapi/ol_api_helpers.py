@@ -155,7 +155,7 @@ def strip_search_result_data(book_data):
     return key_data
 
 def subject_filterer(subjects):
-    blacklisted_chars = [c for c in "1234567890,"]
+    blacklisted_chars = [c for c in "1234567890,-ó./()éÉèï:Ü"]
     subjects = [subject for subject in subjects if not any(c in blacklisted_chars for c in subject)]
     return subjects
 
