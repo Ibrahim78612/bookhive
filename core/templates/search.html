@@ -29,39 +29,32 @@
         linear-gradient(90deg, rgba(255,255,255,0.03), 1px, transparent 1px);
       background-size: 60px 60px;
     }
-    .book {
+    .item {
       display: flex;
       flex-direction: row;
       width: 70%;
-      height: 120px;
+      min-height: 120px;
       backdrop-filter: blur(2px);
       padding: 5px;
       margin: 5px;
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .book-metadata {
+    .metadata {
       margin-left: 15px;
     }
   </style>
 
   <div class="shelf">
-    {% for book in docs %}
-      <div class="book">
-        <img src={{ book.cover }}>
-        <div class="book-metadata">
-          <a href="/books/{{ book.workid }}">
-            {{ book.title }}
-            {% if book.first_publish_year %}
-                ({{ book.first_publish_year }})
-            {% endif %}
+    {% for item in docs %}
+      <div class="item">
+        <img src={{ item.image }}>
+        <div class="metadata">
+          <a href="/books/{{ item.id }}">
+            {{ item.title }}
           </a>
-          <p>
-            {% if book.authors %}
-            {% for author in book.authors %}
-              {{author}} 
+            {% for metadata in item.meta %}
+              <p>{{ metadata }}</p>
             {% endfor %}
-            {% endif %}
-          </p>
         </div>
       </div>
     {% endfor %}
