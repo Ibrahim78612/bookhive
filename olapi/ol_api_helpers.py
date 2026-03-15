@@ -23,7 +23,7 @@ def validate_workid(work_id):
 
 def search_string(string):
     """
-    Converts a string like "Isn't_it_wonderful?" to "isnt+it+wonderful"
+    Converts a string like "Isn't it wonderful?" to "isnt+it+wonderful"
     """
     string = "".join([c for c in string.lower() if c.isalnum() or c == " "])
     string = "+".join(string.split(" "))
@@ -155,8 +155,9 @@ def strip_search_result_data(book_data):
     return key_data
 
 def subject_filterer(subjects):
-    blacklisted_chars = [c for c in "1234567890,-ó./()éÉèï:Ü"]
-    subjects = [subject for subject in subjects if not any(c in blacklisted_chars for c in subject)]
+    # not using .isalpha() because of apostrophes eg. "Children's Fiction"
+    blacklisted_chars = [c for c in "1234567890,_-./():"]
+    subjects = [subject for subject in subjects if not any(c in blacklisted_chars or not c.isascii() for c in subject)]
     return subjects
 
 def rename_field(dictionary, old_name, new_name):
