@@ -158,4 +158,4 @@ def subject_filterer(subjects):
 
 def rename_field(dictionary, old_name, new_name):
     dictionary[new_name] = dictionary[old_name]
-    del old_name
+    del dictionary[old_name]
