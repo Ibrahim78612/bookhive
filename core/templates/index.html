@@ -1,30 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="text-center mb-5">
-    <h1>Welcome to BookHive</h1>
-    <p class="lead">Discover books. Write reviews. Join clubs.</p>
-</div>
+<div class="text-center" style="padding: 80px 0;">
+    <h2 class="fw-semibold mb-3">Discover Your Next Favorite Book</h2>
+    <p class="text-muted mb-5" style="max-width: 720px; margin: 0 auto;">
+        Explore a vast collection of books, connect with fellow readers, and join exciting book clubs. Your
+        literary journey starts here.
+    </p>
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="card p-3">
-            <h4>Browse Books</h4>
-            <p>Search and explore thousands of books.</p>
+    <div class="row justify-content-center g-5">
+        <div class="col-12 col-md-4">
+            <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="text-primary mb-3" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752V14.5c-.598-.448-1.866-.757-3.112-.63-1.237.126-2.52.547-3.388 1.019z"/>
+                    <path d="M7.5 2.687v11.793c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893V2.828c-.868-.472-2.151-.893-3.388-1.019-1.246-.127-2.514.182-3.112.63"/>
+                </svg>
+                <div class="fw-semibold mb-3">Browse Books</div>
+                <a class="btn btn-primary px-4" href="{% url 'book_list' %}">Start Browsing</a>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card p-3">
-            <h4>Create Reading Lists</h4>
-            <p>Organise your favourite reads.</p>
+        <div class="col-12 col-md-4">
+            <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="text-primary mb-3" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1z"/>
+                    <path fill-rule="evenodd" d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                    <path fill-rule="evenodd" d="M13.5 5.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1V6a.5.5 0 0 1 .5-.5"/>
+                </svg>
+                <div class="fw-semibold mb-3">Join Clubs</div>
+                <a class="btn btn-primary px-4" href="{% url 'club_list' %}">Find a Club</a>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card p-3">
-            <h4>Join Book Clubs</h4>
-            <p>Read together and discuss with others.</p>
+        <div class="col-12 col-md-4">
+            <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="text-primary mb-3" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                    <path d="M2 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1z"/>
+                    <path fill-rule="evenodd" d="M14.5 5.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1V6a.5.5 0 0 1 .5-.5"/>
+                </svg>
+                <div class="fw-semibold mb-3">Connect with Friends</div>
+                <a class="btn btn-primary px-4" href="{% url 'signup' %}">Sign Up Now</a>
+            </div>
         </div>
     </div>
 </div>
