@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 
 from books.models import Book
+from olapi.main import cover_from_workid, fetch_from_workid
+
 from .models import Review
-from olapi.main import fetch_from_workid, cover_from_workid
+
+EDIT_MODE_GET_VALUES = frozenset({"1", "true", "yes", "on"})
 
 
 @login_required
@@ -31,7 +34,7 @@ def book_reviews(request, work_id):
         .first()
     )
     show_review_form = (existing_review is None) or (
-        request.GET.get("edit", "0") in {"1", "true", "yes", "on"}
+        request.GET.get("edit", "0") in EDIT_MODE_GET_VALUES
     )
 
     if request.method == "POST":
