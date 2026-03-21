@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
 from django.db.models import Q
 from .models import Book
 from lists.models import List
@@ -14,9 +15,10 @@ def book_list(request):
 
 def book_view(request, work_id):
     try:
-        book_data = fetch_from_workid(work_id)
-        book_cover = cover_from_workid(work_id, is_thumbnail=False)
-        book_data["cover"] = book_cover
+        #book_data = fetch_from_workid(work_id)
+        #book_cover = cover_from_workid(work_id, is_thumbnail=False)
+        #book_data["cover"] = book_cover
+        book_data = {}
         book_data["work_id"] = work_id
         book_data["reviews"] = None
 
@@ -49,6 +51,23 @@ def book_view(request, work_id):
         print(f"couldn't retrieve, {e}")
         return redirect('/')
     return render(request, "books/book_view.html", context=book_data)
+
+def book_json(request):
+    book_data = {}
+    stat = 200
+    try:
+        work_id = request.GET.get("work_id", "")
+        if work_id == "":
+            raise
+
+        book_data = fetch_from_workid(work_id)
+        book_data["cover"] = cover_from_workid(work_id, is_thumbnail=False)
+    except:
+        stat = 404
+    response = JsonResponse(book_data)
+    response.status_code = stat
+    return response
+
 
 @login_required
 def add_book_to_list(request, work_id):

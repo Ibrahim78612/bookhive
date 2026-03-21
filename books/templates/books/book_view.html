@@ -3,6 +3,7 @@
 
 {% block content_wrapper %}
 {% block content %}
+  <script src="{% static 'books/js/get_book_data.js' %}"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
     html {
@@ -189,39 +190,21 @@
     }
     
   </style>
-
+  <p hidden class="work_id">{{ work_id }}</p>
   <div class="page-div">
   <div class="bg-grid"></div>
   <div class="holder">
   <div class="shelf">
-      {% if cover %}
-      <div class="imgdiv"><img src={{cover}}></div>
-      {% else %}
-      <div class="imgdiv"><img src={% static 'book_view' %}></div>
-      {% endif %}
-      <h2 class="title">{{title}}</h2>
+      <div class="imgdiv"><img class="cover" src={% static 'book_view' %}></div>
+      <h2 class="title">Loading book...</h2>
 
-      <b class="authors">
-      {% if authors %}
-      {% for author in authors %}
-          {{author}} 
-      {% endfor %}
-      {% endif %}
-      </b>
+      <b class="authors bookauthors">-</b>
 
-      {% if first_publish_date %}
-      <p>{{first_publish_date}}</p>
-      {% endif %}
+      <p class="year">-</p>
 
-      {% if subjects %}
-      <ul class="tags">
-      {% for tag in subjects %}
-          <li>{{tag}}</li>
-      {% endfor %}
-      </ul>
-      {% endif %}
+      <ul class="tags"></ul>
       <p></p>
-      <sub>Incorrect or missing metadata? <a href="https://openlibrary.org/works/{{work_id}}">Submit corrections on OpenLibrary.</a></sub>
+      <sub class="ollink">Incorrect or missing metadata? <a href="https://openlibrary.org/works/{{work_id}}">Submit corrections on OpenLibrary.</a></sub>
 
       <div class="interaction-container">
         {% if user.is_authenticated %}
@@ -258,8 +241,8 @@
 
   <div class="sideblock">
       <div class="desc-container">
-        <div class="header-bg"><h4>About the Book</h4></div>
-      <p>{{description}}</p>
+      <div class="header-bg"><h4>About the Book</h4></div>
+      <p class="description">This book has no description.</p>
       </div>
       <div class="header-bg"><h4>Reviews</h4></div>
       <div class="review-container">

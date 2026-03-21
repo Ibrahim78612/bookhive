@@ -21,6 +21,10 @@ def fetch_from_workid(work_id, raise_errors=True):
     except:
         if raise_errors == False: return None
         raise
+    # openlibrary is kind of inconsistent - sometimes descriptions are dictionaries, sometimes they're strings. this converts the dicts into a string.
+    if isinstance(book_data["description"], dict):
+        book_data["description"] = book_data["description"]["value"]
+
     return book_data
 
 @check_workid
