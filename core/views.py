@@ -1,6 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+
+# model import for search types
 from django.contrib.auth.models import User
+from clubs.models import Club
+from lists.models import List
+
 
 from olapi.main import fetch_with_title
 from core.search_converter import *
@@ -12,7 +17,7 @@ def search(request):
     query = request.GET.get('query', '')
     # default search type
     search_type = request.GET.get('type', '')
-    allowed_search_types = ['book_view', 'profile']
+    allowed_search_types = ['book_view', 'profile', 'list_detail', 'club_detail']
 
     if query == '' or search_type not in allowed_search_types:
         return redirect("/")
@@ -22,6 +27,10 @@ def search(request):
         data = fetch_title_to_search(fetch_with_title(query))
     if search_type == 'profile':
         data = user_data_to_search(User.objects.filter(username__contains=query))
+    if search_type == 'list_detail':
+        data = list_data_to_search(List.objects.filter(name__contains=query))
+    if search_type == 'club_detail':
+        data = club_data_to_search(Club.objects.filter(name__contains=query))
 
     context = {
         "query": query,

@@ -28,7 +28,6 @@ def user_data_to_search(user_queryset):
     """
     new_list = []
     for user in user_queryset:
-        print(user)
         # get the user's metadata
         clubs = user.clubs.all().count()
         reviews = Review.objects.filter(reviewer=user).count()
@@ -40,6 +39,45 @@ def user_data_to_search(user_queryset):
                 "title": user.username,
                 "id": user.username,
                 "meta": [f"Registered: {joined}", f"Reviews: {reviews}", f"Lists: {lists}", f"Clubs: {clubs}"]
+                }
+        new_list.append(item)
+    return new_list
+
+def club_data_to_search(club_queryset):
+    """
+    Converts club model data to data useable by the search page.
+    """
+    new_list = []
+    for club in club_queryset:
+        # get some relevant list metadata
+        name = club.name
+        owner_name = club.owner.username
+        member_count = club.members.all().count()
+
+        item = {
+                "image": None,
+                "title": name,
+                "id": club.id,
+                "meta": [f"👑 {owner_name}", f"👤 {member_count}"]
+                }
+        new_list.append(item)
+    return new_list
+
+def list_data_to_search(list_queryset):
+    """
+    Converts list model data to data useable by the search page.
+    """
+    new_list = []
+    for book_list in list_queryset:
+        name = book_list.name
+        book_count = book_list.books.all().count()
+        user = book_list.user.username
+
+        item = {
+                "image": None,
+                "title": name,
+                "id": book_list.id,
+                "meta": [f"Created by {user}", f"Has {book_count} books"]
                 }
         new_list.append(item)
     return new_list
