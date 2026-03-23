@@ -3,6 +3,121 @@
 {% block content_wrapper %}
 {% block content %}
 
+<style>
+  .list-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .add-book-form {
+    margin: 24px 0;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+  }
+
+  .book-search-toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .book-search-toolbar input[type="text"] {
+    flex: 1;
+    min-width: 260px;
+    padding: 8px 10px;
+  }
+
+  .book-search-toolbar button {
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+
+  .search-status {
+    margin-bottom: 10px;
+    color: #666;
+  }
+
+  .selected-book-preview {
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+
+  .search-results-wrapper {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .search-results {
+    padding: 8px;
+  }
+
+  .search-result-item {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .search-result-item:hover {
+    background-color: #f7f7f7;
+    border-color: #999;
+  }
+
+  .search-result-item.selected {
+    background-color: #e9f3ff;
+    border-color: #4a90e2;
+  }
+
+  .search-result-cover {
+    width: 50px;
+    height: 72px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: #eee;
+  }
+
+  .search-result-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .search-result-title {
+    font-weight: 600;
+  }
+
+  .search-result-author,
+  .search-result-year {
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .books-list ul {
+    padding-left: 20px;
+  }
+
+  .books-list li {
+    margin-bottom: 8px;
+  }
+</style>
+
 <div class="list-page">
   <div class="list-header">
     <h1>{{ list.name }}</h1>
@@ -22,7 +137,7 @@
     <form method="post" id="add-book-form">
       {% csrf_token %}
 
-      <div style="margin-bottom: 10px;">
+      <div class="book-search-toolbar">
         <input
           type="text"
           id="book-search-input"
@@ -30,20 +145,21 @@
           autocomplete="off"
         >
         <button type="button" id="search-books-btn">Search</button>
+        <button type="submit" name="add_book" id="add-book-btn" disabled>Add Book</button>
       </div>
 
-      <div id="search-status" style="margin-bottom: 10px;"></div>
-
-      <div id="search-results" style="margin-bottom: 15px;"></div>
+      <div id="search-status" class="search-status"></div>
 
       <input type="hidden" name="book_id" id="selected-book-id" required>
 
-      <div id="selected-book-preview" style="margin-bottom: 10px; display: none;">
+      <div id="selected-book-preview" class="selected-book-preview" style="display: none;">
         <strong>Selected:</strong>
         <span id="selected-book-text"></span>
       </div>
 
-      <button type="submit" name="add_book" id="add-book-btn" disabled>Add Book</button>
+      <div id="search-results-wrapper" class="search-results-wrapper">
+        <div id="search-results" class="search-results"></div>
+      </div>
     </form>
   </div>
   {% endif %}
@@ -84,6 +200,7 @@
       $('#selected-book-text').text('');
       $('#selected-book-preview').hide();
       $('#add-book-btn').prop('disabled', true);
+      $('.search-result-item').removeClass('selected');
     }
 
     $('#search-books-btn').on('click', function () {
@@ -106,39 +223,39 @@
         success: function (response) {
           $('#search-status').text('');
 
-          const books = response.books || [];
+          const books = (response.books || []).slice(0, 12);
 
           if (!books.length) {
             $('#search-results').html('<p>No results found.</p>');
             return;
           }
 
-          let html = '<div class="search-results-list">';
+          let html = '';
 
           books.forEach(function (book) {
             const title = escapeHtml(book.title || 'Untitled');
             const authors = escapeHtml((book.authors || []).join(', '));
             const year = escapeHtml(book.first_publish_date || '');
             const workid = escapeHtml(book.workid || '');
-            const cover = book.cover ? `<img src="${escapeHtml(book.cover)}" alt="${title}" style="width:50px;height:auto;margin-right:10px;">` : '';
+            const cover = book.cover
+              ? `<img src="${escapeHtml(book.cover)}" alt="${title}" class="search-result-cover">`
+              : `<div class="search-result-cover"></div>`;
 
             html += `
               <div class="search-result-item"
                    data-workid="${workid}"
                    data-title="${title}"
-                   data-authors="${authors}"
-                   style="border:1px solid #ccc; padding:10px; margin-bottom:8px; cursor:pointer; display:flex; align-items:center;">
+                   data-authors="${authors}">
                 ${cover}
-                <div>
-                  <div><strong>${title}</strong></div>
-                  <div>${authors}</div>
-                  <div>${year}</div>
+                <div class="search-result-meta">
+                  <div class="search-result-title">${title}</div>
+                  <div class="search-result-author">${authors || 'Unknown author'}</div>
+                  <div class="search-result-year">${year}</div>
                 </div>
               </div>
             `;
           });
 
-          html += '</div>';
           $('#search-results').html(html);
         },
         error: function () {
@@ -157,12 +274,19 @@
       $('#selected-book-preview').show();
       $('#add-book-btn').prop('disabled', false);
 
-      $('.search-result-item').css('background-color', '');
-      $(this).css('background-color', '#f0f0f0');
+      $('.search-result-item').removeClass('selected');
+      $(this).addClass('selected');
     });
 
     $('#book-search-input').on('input', function () {
       clearSelection();
+    });
+
+    $('#book-search-input').on('keypress', function (e) {
+      if (e.which === 13) {
+        e.preventDefault();
+        $('#search-books-btn').click();
+      }
     });
   });
 </script>
