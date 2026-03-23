@@ -1,26 +1,50 @@
 from reviews.models import Review
 from lists.models import List
 from clubs.models import Club
+from books.models import Book
 
-def fetch_title_to_search(fetch_data):
+def fetch_title_to_search(fetch_data, order_by):
     """
     Converts the sort of data you get from fetch_from_title into data useable by the search page.
     """
     new_list = []
+    rev = True
+
+    ordering = order_by.split("_")[0]
+    if order_by.split("_")[-1] == "desc":
+        rev = False
+
     for item in fetch_data:
         if item["first_publish_date"] == None:
             item["first_publish_date"] = "-"
         if item["authors"] == None:
             item["authors"] = []
 
+        this_book = Book.objects.filter(hardcover_id=item["workid"]).first()
+        rating = 0
+        review_count = 0
+        rating_str = "No reviews."
+
+        # there is definetly a better way to do this code
+        if this_book != None:
+            reviews = Review.objects.filter(book=this_book)
+            review_count = reviews.count()
+            if review_count != 0:
+                rating = sum([review.rating for review in reviews]) / review_count
+                rating_str = f"{rating:.1f} "+ ("⭐" * int(rating))
+
         item = {
                 "image": item["cover"],
                 "title": item["title"],
                 "id": item["workid"],
-                "meta": [item["first_publish_date"], ", ".join(item["authors"])],
+                "meta": [rating_str, item["first_publish_date"], ", ".join(item["authors"])],
+                "review": rating,
+                "reviewcount": review_count
                 }
         new_list.append(item)
-    return new_list
+
+    new_list.sort(key=lambda x: x[ordering], reverse=rev)
+    return (new_list, ["review", "reviewcount"])
 
 def user_data_to_search(user_queryset):
     """
