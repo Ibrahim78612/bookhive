@@ -18,10 +18,32 @@
   {% if can_edit %}
   <div class="add-book-form">
     <h2>Add Book</h2>
-    <form method="post">
+
+    <form method="post" id="add-book-form">
       {% csrf_token %}
-      <input type="text" name="book_id" placeholder="Enter book hardcover_id" required>
-      <button type="submit" name="add_book">Add Book</button>
+
+      <div style="margin-bottom: 10px;">
+        <input
+          type="text"
+          id="book-search-input"
+          placeholder="Search by title or author"
+          autocomplete="off"
+        >
+        <button type="button" id="search-books-btn">Search</button>
+      </div>
+
+      <div id="search-status" style="margin-bottom: 10px;"></div>
+
+      <div id="search-results" style="margin-bottom: 15px;"></div>
+
+      <input type="hidden" name="book_id" id="selected-book-id" required>
+
+      <div id="selected-book-preview" style="margin-bottom: 10px; display: none;">
+        <strong>Selected:</strong>
+        <span id="selected-book-text"></span>
+      </div>
+
+      <button type="submit" name="add_book" id="add-book-btn" disabled>Add Book</button>
     </form>
   </div>
   {% endif %}
@@ -48,6 +70,103 @@
     {% endif %}
   </div>
 </div>
+
+{% if can_edit %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+  $(document).ready(function () {
+    function escapeHtml(text) {
+      return $('<div>').text(text || '').html();
+    }
+
+    function clearSelection() {
+      $('#selected-book-id').val('');
+      $('#selected-book-text').text('');
+      $('#selected-book-preview').hide();
+      $('#add-book-btn').prop('disabled', true);
+    }
+
+    $('#search-books-btn').on('click', function () {
+      const query = $('#book-search-input').val().trim();
+
+      $('#search-results').empty();
+      clearSelection();
+
+      if (!query) {
+        $('#search-status').text('Please enter a title or author.');
+        return;
+      }
+
+      $('#search-status').text('Searching...');
+
+      $.ajax({
+        url: "{% url 'search_json' %}",
+        method: "GET",
+        data: { query: query },
+        success: function (response) {
+          $('#search-status').text('');
+
+          const books = response.books || [];
+
+          if (!books.length) {
+            $('#search-results').html('<p>No results found.</p>');
+            return;
+          }
+
+          let html = '<div class="search-results-list">';
+
+          books.forEach(function (book) {
+            const title = escapeHtml(book.title || 'Untitled');
+            const authors = escapeHtml((book.authors || []).join(', '));
+            const year = escapeHtml(book.first_publish_date || '');
+            const workid = escapeHtml(book.workid || '');
+            const cover = book.cover ? `<img src="${escapeHtml(book.cover)}" alt="${title}" style="width:50px;height:auto;margin-right:10px;">` : '';
+
+            html += `
+              <div class="search-result-item"
+                   data-workid="${workid}"
+                   data-title="${title}"
+                   data-authors="${authors}"
+                   style="border:1px solid #ccc; padding:10px; margin-bottom:8px; cursor:pointer; display:flex; align-items:center;">
+                ${cover}
+                <div>
+                  <div><strong>${title}</strong></div>
+                  <div>${authors}</div>
+                  <div>${year}</div>
+                </div>
+              </div>
+            `;
+          });
+
+          html += '</div>';
+          $('#search-results').html(html);
+        },
+        error: function () {
+          $('#search-status').text('Search failed. Please try again.');
+        }
+      });
+    });
+
+    $(document).on('click', '.search-result-item', function () {
+      const workid = $(this).data('workid');
+      const title = $(this).data('title');
+      const authors = $(this).data('authors');
+
+      $('#selected-book-id').val(workid);
+      $('#selected-book-text').text(title + (authors ? ' by ' + authors : ''));
+      $('#selected-book-preview').show();
+      $('#add-book-btn').prop('disabled', false);
+
+      $('.search-result-item').css('background-color', '');
+      $(this).css('background-color', '#f0f0f0');
+    });
+
+    $('#book-search-input').on('input', function () {
+      clearSelection();
+    });
+  });
+</script>
+{% endif %}
 
 {% endblock %}
 {% endblock %}
