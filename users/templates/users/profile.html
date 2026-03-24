@@ -11,10 +11,6 @@
 
       <div class="spine-eyebrow">Member Profile</div>
       <div class="spine-username">{{ profile_user.username }}</div>
-      <p>is_owner: {{ is_owner }}</p>
-      <p>logged in: {{ user.is_authenticated }}</p>
-      <p>profile_user: {{ profile_user.username }}</p>
-      <p>logged user: {{ user.username }}</p>
 
       {% if not is_owner and user.is_authenticated %}
       <div class="friend-button">
