@@ -7,9 +7,8 @@ from .models import Book
 from lists.models import List
 from reviews.models import Favourite, Review
 
-from olapi.main import fetch_from_workid, cover_from_workid
+from olapi.main import fetch_from_workid, cover_from_workid, fetch_with_title
 
-import requests
 from django.core.cache import cache
 
 def book_list(request):
@@ -28,25 +27,10 @@ def book_list(request):
     }
 
     results = {}
-
     for name, query in categories.items():
-        url = f"https://openlibrary.org/search.json?q={query}"
-        res = requests.get(url, timeout=3).json()
-        books = res.get("docs", [])[:12]
-
-        processed = []
-        for book in books:
-            cover_id = book.get("cover_i")
-            cover_url = f"https://covers.openlibrary.org/b/id/{cover_id}-L.jpg" if cover_id else None
-
-            processed.append({
-                "title": book.get("title"),
-                "author": (book.get("author_name") or ["Unknown"])[0],
-                "work_id": book.get("key", "")[7:],
-                "cover": cover_url
-            })
-
-        results[name] = processed
+        res = fetch_with_title(query)[:12]
+        print(res)
+        results[name] = res
 
     cache.set("book_categories", results, 60 * 10)
 

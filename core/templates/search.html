@@ -81,6 +81,12 @@
     margin-bottom: 6px;
   }
 
+  #sort-by {
+    float: left;
+    background-color: #000000;
+    color: #ffffff;
+  }
+
   .shelf::before {
     content: "";
     position: absolute;
@@ -92,8 +98,18 @@
     z-index: -1;
   }
 </style>
+<script defer src="{% static 'search/js/dropdown.js' %}"></script>
 
 <div class="shelf">
+  {% if filters %}
+  <select name="sort" id="sort-by">
+    <option value="none" selected disabled hidden>filter by...</option>
+    {% for filter in filters %}
+    <option value="{{ filter }}">{{ filter }} (asc)</option>
+    <option value="{{ filter }}_desc">{{ filter }} (desc)</option>
+    {% endfor %}
+  {% endif %}
+  </select>
   {% for item in docs %}
   <div class="item">
     {% if item.image %}

@@ -31,7 +31,7 @@ def fetch_title_to_search(fetch_data, order_by):
             review_count = reviews.count()
             if review_count != 0:
                 rating = sum([review.rating for review in reviews]) / review_count
-                rating_str = f"{rating:.1f} "+ ("⭐" * int(rating))
+                rating_str = f"{rating:.1f} {'⭐' * int(rating)} ({review_count})"
 
         item = {
                 "image": item["cover"],
