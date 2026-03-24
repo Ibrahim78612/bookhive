@@ -4,572 +4,165 @@
 {% block content %}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Josefin+Sans:wght@300;400;600&display=swap');
-
-  :root {
-    --ink: #1c1410;
-    --parchment: #f5ede0;
-    --cream: #fdf8f2;
-    --amber: #c8813a;
-    --amber-light: #e8a85a;
-    --sienna: #8b4513;
-    --sage: #7a8c6e;
-    --rust: #b85c38;
-    --gold: #d4a843;
-    --shadow-warm: rgba(28, 20, 16, 0.15);
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400&display=swap');
 
   .profile-page {
     min-height: 100vh;
-    background-color: var(--cream);
-    background-image:
-      url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    padding: 60px 20px 80px;
+    background: #0a0a0a;
+    padding: 80px 20px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    font-family: 'Crimson Pro', Georgia, serif;
-    position: relative;
-  }
-
-  .profile-page::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, var(--sienna), var(--amber), var(--gold), var(--amber), var(--sienna));
-    z-index: 100;
   }
 
   .profile-layout {
     width: 100%;
-    max-width: 860px;
+    max-width: 1000px;
     display: grid;
     grid-template-columns: 280px 1fr;
-    gap: 0;
-    background: white;
-    box-shadow:
-      0 2px 4px var(--shadow-warm),
-      0 8px 32px rgba(28, 20, 16, 0.12),
-      0 0 0 1px rgba(200, 129, 58, 0.15);
-    animation: pageReveal 0.9s ease both;
-  }
-
-  @keyframes pageReveal {
-    from {
-      opacity: 0;
-      transform: translateY(24px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
   }
 
   .profile-spine {
-    background: var(--ink);
-    background-image: linear-gradient(175deg, #2a1f18 0%, #1c1410 50%, #241a12 100%);
-    padding: 52px 36px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .profile-spine::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: repeating-linear-gradient(0deg,
-        transparent,
-        transparent 28px,
-        rgba(255, 255, 255, 0.025) 28px,
-        rgba(255, 255, 255, 0.025) 29px);
-  }
-
-  .profile-spine::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 3px;
-    height: 100%;
-    background: linear-gradient(180deg,
-        transparent 0%,
-        var(--gold) 15%,
-        var(--amber-light) 50%,
-        var(--gold) 85%,
-        transparent 100%);
-    opacity: 0.6;
-  }
-
-  .spine-ornament {
-    position: relative;
-    z-index: 1;
-    margin-bottom: 8px;
-  }
-
-  .spine-ornament svg {
-    width: 36px;
-    height: 36px;
-    opacity: 0.7;
+    background: rgba(10, 10, 10, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 40px 30px;
   }
 
   .spine-eyebrow {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.35em;
-    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
+    color: rgba(220, 180, 100, 0.7);
+    margin-bottom: 15px;
   }
 
   .spine-username {
-    font-family: 'Lora', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 26px;
-    font-weight: 700;
-    color: var(--parchment);
-    line-height: 1.25;
-    position: relative;
-    z-index: 1;
-    margin-bottom: 6px;
-  }
-
-  .spine-username em {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--amber-light);
+    color: #f5f0e8;
+    margin-bottom: 10px;
   }
 
   .spine-sub {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: rgba(245, 237, 224, 0.45);
-    position: relative;
-    z-index: 1;
-    margin-bottom: 40px;
-  }
-
-  .friend-button {
-    position: relative;
-    z-index: 1;
-    margin-bottom: 16px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 30px;
   }
 
   .friend-button button {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    background: rgba(220, 180, 100, 0.1);
+    border: 1px solid rgba(220, 180, 100, 0.4);
+    color: rgba(220, 180, 100, 0.9);
+    padding: 8px 14px;
+    font-size: 11px;
     text-transform: uppercase;
-    color: var(--ink);
-    background: var(--amber-light);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
     cursor: pointer;
-    transition: background 0.2s;
   }
 
-  .friend-button button:hover {
-    background: var(--amber);
-  }
-
-  .spine-rule {
-    width: 40px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--amber), transparent);
-    margin-bottom: 40px;
-    position: relative;
-    z-index: 1;
+  .friend-button button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .spine-stat {
-    position: relative;
-    z-index: 1;
-    margin-bottom: 24px;
+    margin-bottom: 25px;
   }
 
   .spine-stat-num {
-    font-family: 'Lora', serif;
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--amber-light);
-    line-height: 1;
-    margin-bottom: 4px;
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: rgba(220, 180, 100, 0.9);
   }
 
   .spine-stat-label {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: rgba(245, 237, 224, 0.4);
-  }
-
-  .spine-footer {
-    margin-top: auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .back-link {
-    font-family: 'Josefin Sans', sans-serif;
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(212, 168, 67, 0.6);
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .back-link {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: rgba(220, 180, 100, 0.6);
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.2s;
-  }
-
-  .back-link:hover {
-    color: var(--gold);
-  }
-
-  .back-link::before {
-    content: '←';
-    font-size: 12px;
   }
 
   .profile-content {
-    padding: 52px 48px;
-    background: var(--cream);
-    background-image: linear-gradient(180deg, #fdf8f2 0%, #faf3ea 100%);
+    padding: 40px;
   }
 
   .section-header {
+    margin-bottom: 20px;
     display: flex;
+    gap: 10px;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(220, 180, 100, 0.7);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #f5f0e8;
   }
 
   .section-icon {
     width: 32px;
     height: 32px;
-    background: var(--ink);
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .section-icon svg {
-    width: 16px;
-    height: 16px;
-    fill: var(--gold);
-  }
-
-  .section-label {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--amber);
-    display: block;
-    margin-bottom: 3px;
-  }
-
-  .section-title {
-    font-family: 'Lora', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1;
-  }
-
-  .clubs-section {
-    margin-bottom: 44px;
-  }
-
-  .clubs-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
 
   .club-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
-    background: white;
-    border: 1px solid rgba(200, 129, 58, 0.15);
-    border-left: 3px solid var(--amber);
-    transition: all 0.2s ease;
-    cursor: default;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 10px;
+    transition: 0.2s;
   }
 
   .club-item:hover {
-    border-left-color: var(--sienna);
-    box-shadow: 0 2px 12px var(--shadow-warm);
-    transform: translateX(3px);
-  }
-
-  .club-item::before {
-    content: '◆';
-    color: var(--amber);
-    font-size: 8px;
-    flex-shrink: 0;
-  }
-
-  .club-item span {
-    font-family: 'Lora', serif;
-    font-size: 15px;
-    color: var(--ink);
-  }
-
-  .lists-section {
-    margin-bottom: 44px;
-  }
-
-  .lists-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .list-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
-    background: white;
-    border: 1px solid rgba(200, 129, 58, 0.15);
-    border-left: 3px solid var(--amber);
-    transition: all 0.2s ease;
-  }
-
-  .list-item:hover {
-    border-left-color: var(--sienna);
-    box-shadow: 0 2px 12px var(--shadow-warm);
-    transform: translateX(3px);
-  }
-
-  .list-item a {
-    font-family: 'Lora', serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .list-item a:hover {
-    color: var(--sienna);
-  }
-
-  .list-item span {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: rgba(28, 20, 16, 0.55);
-  }
-
-  .create-list-link {
-    margin-bottom: 16px;
-  }
-
-  .create-list-link a {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--amber);
-    text-decoration: none;
-    padding: 8px 16px;
-    border: 1px solid var(--amber);
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-
-  .create-list-link a:hover {
-    background: var(--amber);
-    color: white;
-  }
-
-  .books-section {
-    margin-bottom: 44px;
-  }
-
-  .books-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    background: rgba(220, 180, 100, 0.05);
+    border-color: rgba(220, 180, 100, 0.2);
   }
 
   .book-item {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 18px 0;
-    border-bottom: 1px solid rgba(200, 129, 58, 0.12);
-    animation: fadeIn 0.4s ease both;
-  }
-
-  .book-item:first-child {
-    border-top: 1px solid rgba(200, 129, 58, 0.12);
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateX(-8px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .book-item:nth-child(1) {
-    animation-delay: 0ms;
-  }
-
-  .book-item:nth-child(2) {
-    animation-delay: 100ms;
-  }
-
-  .book-item:nth-child(3) {
-    animation-delay: 200ms;
-  }
-
-  .book-item:nth-child(4) {
-    animation-delay: 300ms;
-  }
-
-  .book-item:nth-child(5) {
-    animation-delay: 400ms;
-  }
-
-  .book-item:nth-child(6) {
-    animation-delay: 500ms;
-  }
-
-  .book-item:nth-child(7) {
-    animation-delay: 600ms;
-  }
-
-  .book-item:nth-child(8) {
-    animation-delay: 700ms;
-  }
-
-  .book-item:nth-child(9) {
-    animation-delay: 800ms;
-  }
-
-  .book-num {
-    font-family: 'Lora', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: rgba(200, 129, 58, 0.45);
-    min-width: 22px;
-    padding-top: 2px;
-    text-align: right;
-  }
-
-  .book-spine-color {
-    width: 4px;
-    height: 44px;
-    background: linear-gradient(180deg, var(--amber), var(--sienna));
-    flex-shrink: 0;
-    border-radius: 1px;
-    opacity: 0.6;
-  }
-
-  .book-info {
-    flex: 1;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .book-title-link {
-    font-family: 'Lora', serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
+    color: white;
     text-decoration: none;
-    line-height: 1.3;
-    display: block;
-    margin-bottom: 3px;
-    transition: color 0.2s;
   }
 
   .book-title-link:hover {
-    color: var(--sienna);
-    text-decoration: underline;
-    text-decoration-color: var(--amber);
-    text-underline-offset: 3px;
-  }
-
-  .book-author {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: rgba(28, 20, 16, 0.55);
-  }
-
-  .book-heart {
-    font-size: 14px;
-    color: var(--rust);
-    opacity: 0.7;
-    padding-top: 2px;
+    color: rgba(220, 180, 100, 0.9);
   }
 
   .empty-state {
-    padding: 28px 24px;
-    background: rgba(200, 129, 58, 0.04);
-    border: 1px dashed rgba(200, 129, 58, 0.25);
+    padding: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
     text-align: center;
-  }
-
-  .empty-state p {
-    font-family: 'Crimson Pro', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: rgba(28, 20, 16, 0.4);
+    color: rgba(255, 255, 255, 0.4);
   }
 
   .ornament-divider {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 36px 0;
-  }
-
-  .ornament-divider::before,
-  .ornament-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(200, 129, 58, 0.3), transparent);
-  }
-
-  .ornament-divider-glyph {
-    font-family: 'Lora', serif;
-    font-size: 16px;
-    color: var(--amber);
-    opacity: 0.6;
+    text-align: center;
+    margin: 30px 0;
+    color: rgba(220, 180, 100, 0.5);
   }
 </style>
 
@@ -578,40 +171,32 @@
 
     <aside class="profile-spine">
 
-      <div class="spine-ornament">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 8 C5 8 12 6 20 9 C28 6 35 8 35 8 L35 32 C35 32 28 30 20 33 C12 30 5 32 5 32 Z" stroke="#d4a843"
-            stroke-width="1.5" fill="none" />
-          <line x1="20" y1="9" x2="20" y2="33" stroke="#d4a843" stroke-width="1" opacity="0.5" />
-          <line x1="9" y1="14" x2="18" y2="14" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
-          <line x1="9" y1="18" x2="18" y2="18" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
-          <line x1="9" y1="22" x2="17" y2="22" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
-          <line x1="22" y1="14" x2="31" y2="14" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
-          <line x1="22" y1="18" x2="31" y2="18" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
-          <line x1="22" y1="22" x2="30" y2="22" stroke="#d4a843" stroke-width="0.8" opacity="0.4" />
-        </svg>
-      </div>
-
       <div class="spine-eyebrow">Member Profile</div>
-
       <div class="spine-username">{{ profile_user.username }}</div>
-      {% if not is_owner and user.is_authenticated %}
-        <div class="friend-button">
-          {% if friend_status == 'accepted' %}
-            {% url "unfriend" profile_user.username as unfriend_url %}
-            <button onclick='if(confirm("Are you sure you want to unfriend {{ profile_user.username|escapejs }}?")) { window.location.href = "{{ unfriend_url }}"; }'>Friends</button>
-          {% elif friend_status == 'pending' %}
-            {% url "send_friend_request" profile_user.username as send_url %}
-            <button onclick='window.location.href = "{{ send_url }}";'>Request Sent</button>
-          {% else %}
-            {% url "send_friend_request" profile_user.username as send_url %}
-            <button onclick='window.location.href = "{{ send_url }}";'>Send Friend Request</button>
-          {% endif %}
-        </div>
-      {% endif %}
-      <div class="spine-sub">Reader &amp; Curator</div>
+      <p>is_owner: {{ is_owner }}</p>
+      <p>logged in: {{ user.is_authenticated }}</p>
+      <p>profile_user: {{ profile_user.username }}</p>
+      <p>logged user: {{ user.username }}</p>
 
-      <div class="spine-rule"></div>
+      {% if not is_owner and user.is_authenticated %}
+      <div class="friend-button">
+
+        {% if friend_status == 'accepted' %}
+        {% url "unfriend" profile_user.username as unfriend_url %}
+        <button onclick='window.location.href="{{ unfriend_url }}"'>Friends</button>
+
+        {% elif friend_status == 'pending' %}
+        <button disabled>Request Sent</button>
+
+        {% else %}
+        {% url "add_friend" profile_user.username as send_url %}
+        <button onclick='window.location.href="{{ send_url }}"'>Add Friend</button>
+        {% endif %}
+
+      </div>
+      {% endif %}
+
+      <div class="spine-sub">Reader & Curator</div>
 
       <div class="spine-stat">
         <div class="spine-stat-num">{{ clubs|length }}</div>
@@ -619,32 +204,20 @@
       </div>
 
       <div class="spine-stat">
-        <div class="spine-stat-num">{{ personal_lists|length }}</div>
-        <div class="spine-stat-label">Lists</div>
-      </div>
-
-      <div class="spine-stat">
         <div class="spine-stat-num">{{ reviews|length }}</div>
         <div class="spine-stat-label">Reviews</div>
       </div>
 
-      <div class="spine-footer">
-        <a href="{% url 'index' %}" class="back-link">Back to Home</a>
-      </div>
+      <a href="{% url 'index' %}" class="back-link">Back to Home</a>
 
     </aside>
 
     <main class="profile-content">
 
+      <!-- Clubs -->
       <div class="clubs-section">
         <div class="section-header">
-          <div class="section-icon">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
-                stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
-            </svg>
-          </div>
+          <div class="section-icon"></div>
           <div>
             <span class="section-label">Membership</span>
             <div class="section-title">Clubs</div>
@@ -652,81 +225,20 @@
         </div>
 
         {% if clubs %}
-        <ul class="clubs-list">
-          {% for club in clubs %}
-          <li class="club-item"><span>{{ club.name }}</span></li>
-          {% endfor %}
-        </ul>
+        {% for club in clubs %}
+        <div class="club-item">{{ club.name }}</div>
+        {% endfor %}
         {% else %}
-        <div class="empty-state">
-          <p>"No clubs yet."</p>
-        </div>
+        <div class="empty-state">No clubs yet.</div>
         {% endif %}
       </div>
 
-      <div class="ornament-divider">
-        <span class="ornament-divider-glyph">✦</span>
-      </div>
+      <div class="ornament-divider">✦</div>
 
-      <div class="lists-section">
-        <div class="section-header">
-          <div class="section-icon">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
-            </svg>
-          </div>
-          <div>
-            <span class="section-label">Collections</span>
-            <div class="section-title">Lists</div>
-          </div>
-        </div>
-
-        {% if is_owner %}
-        <div class="create-list-link">
-          <a href="{% url 'create_list' %}">Create New List</a>
-        </div>
-        {% endif %}
-
-        {% if personal_lists or club_lists %}
-        <ul class="lists-list">
-          {% for list in personal_lists %}
-          <li class="list-item">
-            <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
-            <span>(Personal - {{ list.books.count }} books)</span>
-            {% if is_owner %}
-            <a class="list-edit-link" href="{% url 'edit_list' list.id %}">Edit</a>
-            {% endif %}
-          </li>
-          {% endfor %}
-          {% for list in club_lists %}
-          <li class="list-item">
-            <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
-            <span>({{ list.club.name }} - {{ list.books.count }} books)</span>
-            {% if is_owner %}
-            <a class="list-edit-link" href="{% url 'edit_list' list.id %}">Edit</a>
-            {% endif %}
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state">
-          <p>"Start your first reading list."</p>
-        </div>
-        {% endif %}
-      </div>
-
-      <div class="ornament-divider">
-        <span class="ornament-divider-glyph">✦</span>
-      </div>
-
+      <!-- Favourites -->
       <div class="books-section">
         <div class="section-header">
-          <div class="section-icon">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"
-                stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
-            </svg>
-          </div>
+          <div class="section-icon"></div>
           <div>
             <span class="section-label">Library</span>
             <div class="section-title">Favourite Books</div>
@@ -734,39 +246,27 @@
         </div>
 
         {% if favourites %}
-        <ul class="books-list">
-          {% for favourite in favourites %}
-          <li class="book-item">
-            <span class="book-num">{{ forloop.counter }}</span>
-            <div class="book-spine-color"></div>
-            <div class="book-info">
-              <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">
-                {{ favourite.book.title }}
-              </a>
-              <div class="book-author">{{ favourite.book.author }}</div>
-            </div>
-            <span class="book-heart">♥</span>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state">
-          <p>"Your favourites."</p>
+        {% for favourite in favourites %}
+        <div class="book-item">
+          <div>
+            <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">
+              {{ favourite.book.title }}
+            </a>
+            <div>{{ favourite.book.author }}</div>
+          </div>
         </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state">No favourites yet.</div>
         {% endif %}
       </div>
 
-      <div class="ornament-divider">
-        <span class="ornament-divider-glyph">✦</span>
-      </div>
+      <div class="ornament-divider">✦</div>
 
+      <!-- Reviews -->
       <div class="reviews-section">
         <div class="section-header">
-          <div class="section-icon">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#d4a843" stroke-width="2" stroke-linecap="round" fill="none" />
-            </svg>
-          </div>
+          <div class="section-icon"></div>
           <div>
             <span class="section-label">Thoughts</span>
             <div class="section-title">Reviews</div>
@@ -774,23 +274,17 @@
         </div>
 
         {% if reviews %}
-        <ul class="reviews-list">
-          {% for review in reviews %}
-          <li class="review-item">
-            <div class="review-book">
-              <a href="{% url 'book_view' review.book.hardcover_id %}" class="review-book-title">{{ review.book.title }}</a>
-              <div class="review-book-author">by {{ review.book.author }}</div>
-            </div>
-            <div class="review-rating">★ {{ review.rating }}/5</div>
-            <div class="review-comment">{{ review.comment }}</div>
-            <div class="review-date">{{ review.created_at|date:"M j, Y" }}</div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <div class="empty-state">
-          <p>"No reviews yet."</p>
+        {% for review in reviews %}
+        <div class="book-item">
+          <div>
+            <strong>{{ review.book.title }}</strong>
+            <div>★ {{ review.rating }}/5</div>
+            <div>{{ review.comment }}</div>
+          </div>
         </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state">No reviews yet.</div>
         {% endif %}
       </div>
 

@@ -4,7 +4,10 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
 
-    body, .container, .container-fluid, main {
+    body,
+    .container,
+    .container-fluid,
+    main {
         background-color: transparent !important;
         border: none !important;
         box-shadow: none !important;
@@ -20,7 +23,7 @@
         margin-top: -30px;
         background: #0a0a0a;
         overflow: hidden;
-        
+
     }
 
     .bg-grid {
@@ -46,8 +49,17 @@
     }
 
     @keyframes pulse {
-        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .7; }
-        50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+
+        0%,
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: .7;
+        }
+
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 1;
+        }
     }
 
     .clubs-wrapper {
@@ -115,10 +127,21 @@
         background: transparent;
     }
 
-    .btn-view { border: 1px solid rgba(255, 255, 255, 0.3); color: white; }
-    .btn-join { border: 1px solid rgba(220, 180, 100, .4); color: rgba(220, 180, 100, .9); }
-    .btn-delete { border: 1px solid #ff4444; color: #ff4444; }
-    
+    .btn-view {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+
+    .btn-join {
+        border: 1px solid rgba(220, 180, 100, .4);
+        color: rgba(220, 180, 100, .9);
+    }
+
+    .btn-delete {
+        border: 1px solid #ff4444;
+        color: #ff4444;
+    }
+
     .create-link {
         display: inline-block;
         padding: 14px 30px;
@@ -137,15 +160,28 @@
 
     <div class="clubs-wrapper">
         <div class="page-header">
-            <span style="font-family: 'DM Mono'; font-size: 10px; letter-spacing: .4em; color: #dcb464; text-transform: uppercase; display: block; margin-bottom: 10px;">The Registry</span>
+            <span
+                style="font-family:'DM Mono'; font-size:10px; letter-spacing:.4em; color:#dcb464; text-transform:uppercase; display:block; margin-bottom:10px;">The
+                Registry</span>
             <h1>Book Clubs</h1>
         </div>
+
+        {% if not user.is_authenticated %}
+        <div style="text-align:center; margin-bottom:40px;">
+            <div style="font-family:'Playfair Display'; font-size:26px; color:white; margin-bottom:10px;">
+                Explore & Join Clubs
+            </div>
+            <p style="color:rgba(255,255,255,0.5); margin-bottom:20px;">
+                Discover reading communities and connect with others.
+            </p>
+            <a href="/login/" class="create-link">LOGIN TO JOIN CLUBS</a>
+        </div>
+        {% endif %}
 
         {% if user.is_authenticated %}
         <div style="text-align: center;">
             <a href="{% url 'club_create' %}" class="create-link">+ ESTABLISH NEW CLUB</a>
         </div>
-        {% endif %}
 
         <div class="row">
             {% for club in clubs %}
@@ -153,37 +189,38 @@
                 <div class="club-card">
                     <div class="club-name">{{ club.name }}</div>
                     <div class="club-desc">{{ club.description|truncatewords:25 }}</div>
-                    
+
                     <a href="{% url 'club_detail' club.id %}" class="action-btn btn-view">View Details</a>
 
-                    {% if user.is_authenticated %}
-                        {% if user in club.members.all %}
-                            <form method="POST" action="{% url 'leave_club' club.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="action-btn" style="color: #ffbb33; border: 1px solid #ffbb33;">Leave Club</button>
-                            </form>
-                        {% else %}
-                            <form method="POST" action="{% url 'join_club' club.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="action-btn btn-join">Join Club</button>
-                            </form>
-                        {% endif %}
+                    {% if user in club.members.all %}
+                    <form method="POST" action="{% url 'leave_club' club.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn" style="color:#ffbb33; border:1px solid #ffbb33;">Leave
+                            Club</button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{% url 'join_club' club.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn btn-join">Join Club</button>
+                    </form>
+                    {% endif %}
 
-                        {% if club.owner == user %}
-                            <form method="POST" action="{% url 'club_delete' club.id %}" onsubmit="return confirm('Archive this club forever?');">
-                                {% csrf_token %}
-                                <button type="submit" class="action-btn btn-delete">Delete Club</button>
-                            </form>
-                        {% endif %}
+                    {% if club.owner == user %}
+                    <form method="POST" action="{% url 'club_delete' club.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn btn-delete">Delete Club</button>
+                    </form>
                     {% endif %}
                 </div>
             </div>
             {% empty %}
             <div class="col-12 text-center">
-                <p style="color: rgba(255,255,255,0.4); font-family: 'DM Mono';">NO CLUBS RECORDED IN THE ARCHIVE</p>
+                <p style="color:rgba(255,255,255,0.4); font-family:'DM Mono';">NO CLUBS RECORDED IN THE ARCHIVE</p>
             </div>
             {% endfor %}
         </div>
+        {% endif %}
     </div>
 </div>
+
 {% endblock %}

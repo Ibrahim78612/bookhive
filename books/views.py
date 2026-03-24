@@ -9,20 +9,57 @@ from reviews.models import Favourite, Review
 
 from olapi.main import fetch_from_workid, cover_from_workid
 
+import requests
+from django.core.cache import cache
+
 def book_list(request):
-    books = Book.objects.all()
-    return render(request, "books/book_list.html", {"books": books})
+    cached = cache.get("book_categories")
+
+    if cached:
+        return render(request, "books/book_list.html", {
+            "categories": cached
+        })
+
+    categories = {
+        "Trending": "bestsellers",
+        "Fantasy": "fantasy",
+        "Romance": "romance",
+        "Business": "business",
+    }
+
+    results = {}
+
+    for name, query in categories.items():
+        url = f"https://openlibrary.org/search.json?q={query}"
+        res = requests.get(url, timeout=3).json()
+        books = res.get("docs", [])[:12]
+
+        processed = []
+        for book in books:
+            cover_id = book.get("cover_i")
+            cover_url = f"https://covers.openlibrary.org/b/id/{cover_id}-L.jpg" if cover_id else None
+
+            processed.append({
+                "title": book.get("title"),
+                "author": (book.get("author_name") or ["Unknown"])[0],
+                "work_id": book.get("key", "")[7:],
+                "cover": cover_url
+            })
+
+        results[name] = processed
+
+    cache.set("book_categories", results, 60 * 10)
+
+    return render(request, "books/book_list.html", {
+        "categories": results
+    })
 
 def book_view(request, work_id):
     try:
-        #book_data = fetch_from_workid(work_id)
-        #book_cover = cover_from_workid(work_id, is_thumbnail=False)
-        #book_data["cover"] = book_cover
         book_data = {}
         book_data["work_id"] = work_id
         book_data["reviews"] = None
 
-        # Check if book is in user's favourites
         if request.user.is_authenticated:
             try:
                 book_obj = Book.objects.get(hardcover_id=work_id)
@@ -35,7 +72,6 @@ def book_view(request, work_id):
             book_data["favourite_count"] = favourite_count
             book_data["favourite_limit"] = 5
 
-            # Provide user's lists for the "Add to a List" action
             user_lists = List.objects.filter(
                 Q(user=request.user) | Q(club__members=request.user)
             ).distinct()
@@ -84,7 +120,6 @@ def add_book_to_list(request, work_id):
         messages.error(request, "You don't have permission to edit that list.")
         return redirect('book_view', work_id=work_id)
 
-    # Ensure book exists in database
     try:
         book_obj = Book.objects.get(hardcover_id=work_id)
     except Book.DoesNotExist:
@@ -111,9 +146,7 @@ def add_book_to_list(request, work_id):
 def add_to_favourites(request, work_id):
     if request.method == 'POST':
         try:
-            # Fetch book info from Open Library to create/get Book object
             book_data = fetch_from_workid(work_id)
-            # Get or create book in database
             book, created = Book.objects.get_or_create(
                 hardcover_id=work_id,
                 defaults={
@@ -122,14 +155,11 @@ def add_to_favourites(request, work_id):
                 }
             )
             
-            # Check if already in favourites
             favourite = Favourite.objects.filter(user=request.user, book=book).first()
             
             if favourite:
-                # Remove from favourites if already there
                 favourite.delete()
             else:
-                # Add to favourites if not at limit
                 favourite_count = Favourite.objects.filter(user=request.user).count()
                 if favourite_count < 5:
                     Favourite.objects.create(user=request.user, book=book)

@@ -1,48 +1,281 @@
 {% extends "base.html" %}
 
+{% block content_wrapper %}
 {% block content %}
-<div class="text-center" style="padding: 80px 0;">
-    <h2 class="fw-semibold mb-3">Discover Your Next Favorite Book</h2>
-    <p class="text-muted mb-5" style="max-width: 720px; margin: 0 auto;">
-        Explore a vast collection of books, connect with fellow readers, and join exciting book clubs. Your
-        literary journey starts here.
-    </p>
 
-    <div class="row justify-content-center g-5">
-        <div class="col-12 col-md-4">
-            <div class="text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="text-primary mb-3" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752V14.5c-.598-.448-1.866-.757-3.112-.63-1.237.126-2.52.547-3.388 1.019z"/>
-                    <path d="M7.5 2.687v11.793c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893V2.828c-.868-.472-2.151-.893-3.388-1.019-1.246-.127-2.514.182-3.112.63"/>
-                </svg>
-                <div class="fw-semibold mb-3">Browse Books</div>
-                <a class="btn btn-primary px-4" href="{% url 'book_list' %}">Start Browsing</a>
-            </div>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+    .home-page {
+        position: relative;
+        min-height: 100vh;
+        padding: 80px 20px;
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+        z-index: 0;
+    }
+
+    .glow-orb {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(220, 180, 100, 0.12) 0%, transparent 70%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 1;
+        }
+    }
+
+    .home-wrapper {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 900px;
+        animation: slideUp 0.8s ease both;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .home-header {
+        text-align: center;
+        margin-bottom: 64px;
+    }
+
+    .home-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: rgba(220, 180, 100, 0.7);
+        text-transform: uppercase;
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    .home-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 52px;
+        font-weight: 400;
+        color: #f5f0e8;
+        line-height: 1.15;
+        margin: 0 0 20px;
+    }
+
+    .home-header h1 em {
+        font-style: italic;
+        color: rgba(220, 180, 100, 0.9);
+    }
+
+    .home-header p {
+        font-family: 'DM Mono', monospace;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.35);
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.8;
+        letter-spacing: 0.05em;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .cards-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .home-header h1 {
+            font-size: 36px;
+        }
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 40px 32px;
+        backdrop-filter: blur(20px);
+        transition: border-color 0.3s ease, background 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .feature-card:hover {
+        border-color: rgba(220, 180, 100, 0.3);
+        background: rgba(220, 180, 100, 0.04);
+    }
+
+    .card-icon {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 24px;
+        color: rgba(220, 180, 100, 0.7);
+    }
+
+    .card-label {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: rgba(220, 180, 100, 0.5);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .feature-card h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 22px;
+        font-weight: 400;
+        color: #f5f0e8;
+        margin: 0 0 14px;
+        line-height: 1.2;
+    }
+
+    .feature-card h3 em {
+        font-style: italic;
+        color: rgba(220, 180, 100, 0.9);
+    }
+
+    .feature-card p {
+        font-family: 'DM Mono', monospace;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.3);
+        line-height: 1.8;
+        margin: 0 0 28px;
+        flex: 1;
+    }
+
+    .card-btn {
+        display: inline-block;
+        padding: 12px 22px;
+        background: rgba(220, 180, 100, 0.1);
+        border: 1px solid rgba(220, 180, 100, 0.4);
+        color: rgba(220, 180, 100, 0.9);
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .card-btn:hover {
+        background: rgba(220, 180, 100, 0.2);
+        border-color: rgba(220, 180, 100, 0.7);
+        color: rgba(220, 180, 100, 1);
+    }
+
+    .divider {
+        margin: 60px 0 0;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.06);
+        border: none;
+    }
+</style>
+
+<div class="home-page">
+
+    <div class="bg-grid"></div>
+    <div class="glow-orb"></div>
+
+    <div class="home-wrapper">
+
+        <div class="home-header">
+            <span class="home-label">Your reading life, elevated</span>
+            <h1>Find books you'll<br><em>actually</em> love.</h1>
+            <p>Discover handpicked books, join communities of readers, and turn reading into a daily habit you enjoy.
+            </p>
         </div>
 
-        <div class="col-12 col-md-4">
-            <div class="text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="text-primary mb-3" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1z"/>
-                    <path fill-rule="evenodd" d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                    <path fill-rule="evenodd" d="M13.5 5.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1V6a.5.5 0 0 1 .5-.5"/>
+        <div class="cards-grid">
+
+            <div class="feature-card">
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"
+                    aria-hidden="true">
+                    <path
+                        d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752V14.5c-.598-.448-1.866-.757-3.112-.63-1.237.126-2.52.547-3.388 1.019z" />
+                    <path
+                        d="M7.5 2.687v11.793c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893V2.828c-.868-.472-2.151-.893-3.388-1.019-1.246-.127-2.514.182-3.112.63" />
                 </svg>
-                <div class="fw-semibold mb-3">Join Clubs</div>
-                <a class="btn btn-primary px-4" href="{% url 'club_list' %}">Find a Club</a>
+                <span class="card-label">Discover</span>
+                <h3>Browse <em>Books</em></h3>
+                <p>Explore curated collections and trending reads chosen by people who take books seriously.</p>
+                <a class="card-btn" href="{% url 'book_list' %}">Start Browsing →</a>
             </div>
+
+            <div class="feature-card">
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"
+                    aria-hidden="true">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1z" />
+                    <path fill-rule="evenodd" d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                    <path fill-rule="evenodd"
+                        d="M13.5 5.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1V6a.5.5 0 0 1 .5-.5" />
+                </svg>
+                <span class="card-label">Connect</span>
+                <h3>Join <em>Communities</em></h3>
+                <p>Join discussions and connect with readers who share your taste. Find your people.</p>
+            </div>
+
+            <div class="feature-card">
+                <svg class="card-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"
+                    aria-hidden="true">
+                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                    <path d="M2 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1z" />
+                    <path fill-rule="evenodd"
+                        d="M14.5 5.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1V6a.5.5 0 0 1 .5-.5" />
+                </svg>
+                <span class="card-label">Share</span>
+                <h3>Build your <em>Circle</em></h3>
+                <p>Share recommendations and build a reading circle with friends, colleagues and fellow enthusiasts.</p>
+            </div>
+
         </div>
 
-        <div class="col-12 col-md-4">
-            <div class="text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="text-primary mb-3" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                    <path d="M2 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1z"/>
-                    <path fill-rule="evenodd" d="M14.5 5.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1V6a.5.5 0 0 1 .5-.5"/>
-                </svg>
-                <div class="fw-semibold mb-3">Connect with Friends</div>
-                <a class="btn btn-primary px-4" href="{% url 'signup' %}">Sign Up Now</a>
-            </div>
-        </div>
+        <hr class="divider">
+
     </div>
+
 </div>
+
+{% endblock %}
 {% endblock %}

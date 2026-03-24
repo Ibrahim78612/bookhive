@@ -3,81 +3,106 @@
 
 {% block content_wrapper %}
 {% block content %}
-  <link rel="stylesheet" href="{% static 'books/css/book_view.css' %}">
-  <script src="{% static 'books/js/get_book_data.js' %}"></script>
-  <p hidden class="work_id">{{ work_id }}</p>
-  <div class="page-div">
+<link rel="stylesheet" href="{% static 'books/css/book_view.css' %}">
+<script src="{% static 'books/js/get_book_data.js' %}"></script>
+
+<p hidden class="work_id">{{ work_id }}</p>
+
+<div class="page-div">
   <div class="bg-grid"></div>
+
   <div class="holder">
-  <div class="shelf">
-      <div class="imgdiv"><img class="cover" src={% static 'book_view' %}></div>
+    <div class="shelf">
+
+      <div class="imgdiv">
+        <img class="cover" src={% static 'book_view' %}>
+      </div>
+
       <h2 class="title">Loading book...</h2>
-
       <b class="authors bookauthors">-</b>
-
       <p class="year">-</p>
 
       <ul class="tags"></ul>
-      <p></p>
-      <sub class="ollink">Incorrect or missing metadata? <a href="https://openlibrary.org/works/{{work_id}}">Submit corrections on OpenLibrary.</a></sub>
+
+      <sub class="ollink">
+        Incorrect or missing metadata?
+        <a href="https://openlibrary.org/works/{{work_id}}">
+          Submit corrections on OpenLibrary.
+        </a>
+      </sub>
 
       <div class="interaction-container">
-        {% if user.is_authenticated %}
-        <form method="post" action="{% url 'add_book_to_list' work_id %}" class="add-to-list-form">
-          {% csrf_token %}
-          <label for="list_id">Add to list:</label>
-          <select name="list_id" id="list_id" required>
-            <option value="" disabled selected>Select a list</option>
-            {% for list in user_lists %}
-            <option value="{{ list.id }}">{{ list.name }}{% if list.club %} ({{ list.club.name }}){% endif %}</option>
-            {% endfor %}
-          </select>
-          <button type="submit">Add</button>
-        </form>
-        <a href="{% url 'book_reviews' work_id %}">Write a Review</a>
-          {% if is_favourite %}
-            <form method="POST" action="{% url 'add_to_favourites' work_id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn-favourite active">♥ Remove from Favourites</button>
-            </form>
-          {% elif favourite_count >= favourite_limit %}
-            <p style="color: rgba(255, 100, 100, 0.8);">Favourite limit reached ({{ favourite_count }}/{{ favourite_limit }})</p>
-          {% else %}
-            <form method="POST" action="{% url 'add_to_favourites' work_id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn-favourite">♡ Add to Favourites ({{ favourite_count }}/{{ favourite_limit }})</button>
-            </form>
-          {% endif %}
-        {% else %}
-          <p><a href="{% url 'login' %}">Log in</a> to add to favourites</p>
-        {% endif %}
-      </div>
-  </div>
 
-  <div class="sideblock">
-      <div class="desc-container">
-      <div class="header-bg"><h4>About the Book</h4></div>
-      <p class="description">This book has no description.</p>
+        {% if user.is_authenticated %}
+
+        <a href="{% url 'book_reviews' work_id %}">Write a Review</a>
+
+        {% if is_favourite %}
+        <form method="POST" action="{% url 'add_to_favourites' work_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-favourite active">
+            ♥ Remove from Favourites
+          </button>
+        </form>
+
+        {% elif favourite_count >= favourite_limit %}
+        <p style="color: rgba(255, 100, 100, 0.8);">
+          Favourite limit reached ({{ favourite_count }}/{{ favourite_limit }})
+        </p>
+
+        {% else %}
+        <form method="POST" action="{% url 'add_to_favourites' work_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn-favourite">
+            ♡ Add to Favourites ({{ favourite_count }}/{{ favourite_limit }})
+          </button>
+        </form>
+        {% endif %}
+
+        {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to add to favourites</p>
+        {% endif %}
+
       </div>
-      <div class="header-bg"><h4>Reviews</h4></div>
+    </div>
+
+    <div class="sideblock">
+
+      <div class="desc-container">
+        <div class="header-bg">
+          <h4>About the Book</h4>
+        </div>
+        <p class="description">This book has no description.</p>
+      </div>
+
+      <div class="header-bg">
+        <h4>Reviews</h4>
+      </div>
+
       <div class="review-container">
         {% if reviews %}
-          {% for review in reviews %}
-            <div class="review">
-              <a class="authors" href="{% url 'profile' review.reviewer.username %}">{{ review.reviewer.username }}</a>
-            <div class="review-meta">
-              <p>{{ review.rating }}</p><p>{{ review.created_at }}</p>
-            </div>
-            <p>{{ review.comment }}</p>
-            </div>
-          {% endfor %}
-        {% else %}
-          <p>No reviews yet.</p>
-        {% endif %}
+        {% for review in reviews %}
+        <div class="review">
+          <a class="authors" href="{% url 'profile' review.reviewer.username %}">
+            {{ review.reviewer.username }}
+          </a>
 
+          <div class="review-meta">
+            <p>{{ review.rating }}</p>
+            <p>{{ review.created_at }}</p>
+          </div>
+
+          <p>{{ review.comment }}</p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No reviews yet.</p>
+        {% endif %}
       </div>
+
+    </div>
   </div>
-  </div>
-  </div>
+</div>
+
 {% endblock %}
 {% endblock %}
