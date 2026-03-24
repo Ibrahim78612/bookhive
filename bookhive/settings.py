@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$$!%*+=54(_i9e22u+8^cbku=tnj%8xhmvgd&(-1)vw%i2e%*-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bookhiveproject.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
