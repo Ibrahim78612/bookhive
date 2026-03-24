@@ -1,0 +1,84 @@
+    .auth-page {
+        position: relative;
+        min-height: 100vh;
+        padding: 100px 0;
+    }
+
+    .bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+    }
+
+    .form-wrapper {
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .form-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        padding: 40px;
+    }
+
+    .form-title {
+        font-family: 'Playfair Display', serif;
+        color: #f5f0e8;
+        font-size: 36px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        background: rgba(20, 20, 20, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 10px;
+    }
+
+    .form-group textarea {
+        min-height: 150px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .submit-btn {
+        flex: 1;
+        padding: 12px;
+        background: rgba(220, 180, 100, 0.1);
+        border: 1px solid rgba(220, 180, 100, 0.4);
+        color: rgba(220, 180, 100, 0.9);
+        text-transform: uppercase;
+        font-size: 11px;
+    }
+
+    .cancel-btn {
+        flex: 1;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        text-align: center;
+        text-decoration: none;
+    }

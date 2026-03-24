@@ -1,0 +1,160 @@
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400&display=swap');
+
+  .profile-page {
+    min-height: 100vh;
+    background: #0a0a0a;
+    padding: 80px 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile-layout {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+  }
+
+  .profile-spine {
+    background: rgba(10, 10, 10, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 40px 30px;
+  }
+
+  .spine-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(220, 180, 100, 0.7);
+    margin-bottom: 15px;
+  }
+
+  .spine-username {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #f5f0e8;
+    margin-bottom: 10px;
+  }
+
+  .spine-sub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 30px;
+  }
+
+  .friend-button button {
+    background: rgba(220, 180, 100, 0.1);
+    border: 1px solid rgba(220, 180, 100, 0.4);
+    color: rgba(220, 180, 100, 0.9);
+    padding: 8px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .friend-button button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .spine-stat {
+    margin-bottom: 25px;
+  }
+
+  .spine-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: rgba(220, 180, 100, 0.9);
+  }
+
+  .spine-stat-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .back-link {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: rgba(220, 180, 100, 0.6);
+    text-decoration: none;
+  }
+
+  .profile-content {
+    padding: 40px;
+  }
+
+  .section-header {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(220, 180, 100, 0.7);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #f5f0e8;
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .club-item {
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 10px;
+    transition: 0.2s;
+  }
+
+  .club-item:hover {
+    background: rgba(220, 180, 100, 0.05);
+    border-color: rgba(220, 180, 100, 0.2);
+  }
+
+  .book-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .book-title-link {
+    color: white;
+    text-decoration: none;
+  }
+
+  .book-title-link:hover {
+    color: rgba(220, 180, 100, 0.9);
+  }
+
+  .empty-state {
+    padding: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .ornament-divider {
+    text-align: center;
+    margin: 30px 0;
+    color: rgba(220, 180, 100, 0.5);
+  }
