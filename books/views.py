@@ -29,7 +29,6 @@ def book_list(request):
     results = {}
     for name, query in categories.items():
         res = fetch_with_title(query)[:12]
-        print(res)
         results[name] = res
 
     cache.set("book_categories", results, 60 * 10)
