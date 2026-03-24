@@ -73,12 +73,12 @@ def profile_view(request, username):
     friend_status = None
     if request.user.is_authenticated and request.user != profile_user:
         req = FriendRequest.objects.filter(
-            (Q(from_user=request.user, to_user=profile_user) |
-             Q(from_user=profile_user, to_user=request.user))
+            Q(from_user=request.user, to_user=profile_user) |
+            Q(from_user=profile_user, to_user=request.user)
         ).first()
 
         if req:
-            friend_status = 'accepted' if req.accepted else 'pending'
+            friend_status = req.status
         else:
             friend_status = 'none'
 
@@ -110,15 +110,15 @@ def send_friend_request(request, username):
         return redirect('profile', username=username)
 
     existing = FriendRequest.objects.filter(
-        (Q(from_user=request.user, to_user=to_user) |
-         Q(from_user=to_user, to_user=request.user))
+        Q(from_user=request.user, to_user=to_user) |
+        Q(from_user=to_user, to_user=request.user)
     ).first()
 
     if existing:
-        if not existing.accepted:
+        if existing.status != 'accepted':
             existing.delete()
     else:
-        FriendRequest.objects.create(from_user=request.user, to_user=to_user)
+        FriendRequest.objects.create(from_user=request.user, to_user=to_user, status='pending')
 
     return redirect('profile', username=username)
 
@@ -131,10 +131,10 @@ def accept_friend_request(request, request_id):
         FriendRequest,
         id=request_id,
         to_user=request.user,
-        accepted=False
+        status='pending'
     )
 
-    friend_request.accepted = True
+    friend_request.status = 'accepted'
     friend_request.save()
 
     return redirect('friends')
@@ -148,10 +148,11 @@ def decline_friend_request(request, request_id):
         FriendRequest,
         id=request_id,
         to_user=request.user,
-        accepted=False
+        status='pending'
     )
 
-    friend_request.delete()
+    friend_request.status = 'declined'
+    friend_request.save()
     return redirect('friends')
 
 
@@ -162,9 +163,9 @@ def unfriend(request, username):
     friend = get_object_or_404(User, username=username)
 
     req = FriendRequest.objects.filter(
-        (Q(from_user=request.user, to_user=friend) |
-         Q(from_user=friend, to_user=request.user)),
-        accepted=True
+        Q(from_user=request.user, to_user=friend) |
+        Q(from_user=friend, to_user=request.user),
+        status='accepted'
     ).first()
 
     if req:
@@ -178,8 +179,8 @@ def friends_view(request):
         return redirect('login')
 
     friends_requests = FriendRequest.objects.filter(
-        (Q(from_user=request.user) | Q(to_user=request.user)),
-        accepted=True
+        Q(from_user=request.user) | Q(to_user=request.user),
+        status='accepted'
     )
 
     friends = []
@@ -191,12 +192,12 @@ def friends_view(request):
 
     received_pending = FriendRequest.objects.filter(
         to_user=request.user,
-        accepted=False
+        status='pending'
     )
 
     sent_pending = FriendRequest.objects.filter(
         from_user=request.user,
-        accepted=False
+        status='pending'
     )
 
     return render(request, 'users/friends.html', {
