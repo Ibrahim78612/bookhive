@@ -7,7 +7,8 @@ if (typeof jQuery === "undefined") {
 }
 
 addSubject = function(currentValue) {
-  $(".tags")/append("<li>"+currentValue+"</li>");
+  console.log("adding "+currentValue);
+  $(".tags").append("<li>"+currentValue+"</li>");
 }
 
 window.onload = function() {

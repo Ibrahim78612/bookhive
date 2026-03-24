@@ -84,6 +84,7 @@ def book_json(request):
     except:
         stat = 404
     response = JsonResponse(book_data)
+    print(book_data)
     response.status_code = stat
     return response
 
