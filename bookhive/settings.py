@@ -20,13 +20,15 @@ STATIC_DIR = BASE_DIR / 'static'
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$$!%*+=54(_i9e22u+8^cbku=tnj%8xhmvgd&(-1)vw%i2e%*-'
+key = None
+with open('secret.key') as f:
+    key = f.read().strip()
+SECRET_KEY = key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['bookhiveproject.pythonanywhere.com', '127.0.0.1']
-
 
 # Application definition
 
