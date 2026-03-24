@@ -13,11 +13,13 @@ def validate_workid(work_id):
     """
     Checks if a given string is a valid OpenLibrary work ID.
     """
+    if len(work_id) <= 3:
+        return False
     if work_id[:2] != "OL":
         return False
     if work_id[-1] != "W":
         return False
-    if not work_id[2:-1].isdigit():
+    if not work_id[2:-1].isdigit() or work_id[2:-1] == "":
         return False
     return True
 
@@ -143,7 +145,8 @@ def strip_book_data(book_data):
 
 def strip_search_result_data(book_data):
     key_data = get_from_dict(book_data, "title", "author_name", "first_publish_year", "cover_i", "key")
-    key_data["key"] = key_data["key"].split("/")[-1]
+    if key_data["key"] != None:
+        key_data["key"] = key_data["key"].split("/")[-1]
     # rename fields so it is more consistent with strip_book_data
     rename_field(key_data, "key", "workid")
     rename_field(key_data, "author_name", "authors")
@@ -161,5 +164,6 @@ def subject_filterer(subjects):
     return subjects
 
 def rename_field(dictionary, old_name, new_name):
-    dictionary[new_name] = dictionary[old_name]
-    del dictionary[old_name]
+    dictionary[new_name] = dictionary.get(old_name, None)
+    if old_name in dictionary:
+        del dictionary[old_name]

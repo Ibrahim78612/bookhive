@@ -10,9 +10,13 @@ def fetch_title_to_search(fetch_data, order_by):
     new_list = []
     rev = True
 
+    allowed_orders = ["review", "reviewcount"]
     ordering = order_by.split("_")[0]
+
     if order_by.split("_")[-1] == "desc":
         rev = False
+    if ordering not in allowed_orders:
+        ordering = allowed_orders[0]
 
     for item in fetch_data:
         if item["first_publish_date"] == None:
@@ -44,7 +48,7 @@ def fetch_title_to_search(fetch_data, order_by):
         new_list.append(item)
 
     new_list.sort(key=lambda x: x[ordering], reverse=rev)
-    return (new_list, ["review", "reviewcount"])
+    return (new_list, allowed_orders)
 
 def user_data_to_search(user_queryset):
     """
@@ -59,7 +63,7 @@ def user_data_to_search(user_queryset):
         joined = user.date_joined.date()
 
         item = {
-                "image": None, # users currently have no profile pictures, so let the search template use a default image
+                "image": 0, # users currently have no profile pictures, so let the search template use a default image
                 "title": user.username,
                 "id": user.username,
                 "meta": [f"Registered: {joined}", f"Reviews: {reviews}", f"Lists: {lists}", f"Clubs: {clubs}"]
@@ -79,7 +83,7 @@ def club_data_to_search(club_queryset):
         member_count = club.members.all().count()
 
         item = {
-                "image": None,
+                "image": 0,
                 "title": name,
                 "id": club.id,
                 "meta": [f"👑 {owner_name}", f"👤 {member_count}"]
@@ -98,7 +102,7 @@ def list_data_to_search(list_queryset):
         user = book_list.user.username
 
         item = {
-                "image": None,
+                "image": 0,
                 "title": name,
                 "id": book_list.id,
                 "meta": [f"Created by {user}", f"Has {book_count} books"]

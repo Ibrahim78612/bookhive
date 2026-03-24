@@ -16,12 +16,15 @@
     {% endfor %}
   {% endif %}
   </select>
+  {% if docs %}
   {% for item in docs %}
   <div class="item">
     {% if item.image %}
-    <div class="imgdiv"><img src={{ item.image }}></div>
-    {% else %}
-    <div class="imgdiv"><img src="{% static to_page %}"></div>
+      {% if item.image == 0 %}
+        <div class="imgdiv"><img src="{% static to_page %}"></div>
+      {% else %}
+        <div class="imgdiv"><img src={{ item.image }}></div>
+      {% endif %}
     {% endif %}
     <div class="metadata">
       <a href="{% url to_page item.id %}">
@@ -33,6 +36,10 @@
     </div>
   </div>
   {% endfor %}
+  {% else %}
+  <h2>These things happen...</h2>
+  <p>Your query seems to have no results.</p>
+  {% endif %}
 </div>
 
 {% endblock %}

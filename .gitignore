@@ -5,3 +5,4 @@ venv/
 .env
 staticfiles/
 secret.key
+bookhive/settings.py
