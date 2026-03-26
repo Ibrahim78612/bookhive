@@ -47,17 +47,22 @@ def cover_from_workid(work_id, is_thumbnail=True):
 # will be expanded to help implement search later
 @use_search_string
 def fetch_with_title(title, limit=10):
-    """
-    Searches OpenLibrary with partial/fuzzy matching.
-    Returns top `limit` results (default 10) so users don't need exact titles.
-    """
-    encoded_title = title.replace(" ", "+")
+
+    if not title or len(title.strip()) < 2:
+        return []
+
+    encoded_title = title.strip().replace(" ", "+")
     fetch_url = f"https://openlibrary.org/search.json?q={encoded_title}&limit={limit}"
     
-    process_docs = lambda x: [strip_search_result_data(i) for i in x["docs"][:limit]]
+    process_docs = lambda x: [strip_search_result_data(i) for i in x.get("docs", [])[:limit]]
     
     try:
         books_data = json_from_url(fetch_url, processing_func=process_docs)
-    except Exception as e:
-        books_data = None
+    except Exception:
+        return []   # ✅ NEVER return None
+
+    # extra safety
+    if not books_data:
+        return []
+
     return books_data
