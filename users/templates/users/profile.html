@@ -1,54 +1,43 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block content_wrapper %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'lists/css/lists_profile.css' %}">
 <div class="profile-page">
   <div class="profile-layout">
-
     <aside class="profile-spine">
-
       <div class="spine-eyebrow">Member Profile</div>
       <div class="spine-username">{{ profile_user.username }}</div>
-
       {% if not is_owner and user.is_authenticated %}
       <div class="friend-button">
-
         {% if friend_status == 'accepted' %}
         {% url "unfriend" profile_user.username as unfriend_url %}
         <button onclick='window.location.href="{{ unfriend_url }}"'>Friends</button>
-
         {% elif friend_status == 'pending' %}
         <button disabled>Request Sent</button>
-
         {% else %}
         {% url "add_friend" profile_user.username as send_url %}
         <button onclick='window.location.href="{{ send_url }}"'>Add Friend</button>
         {% endif %}
-
       </div>
       {% endif %}
-
       <div class="spine-sub">Reader & Curator</div>
-
       <div class="spine-stat">
         <div class="spine-stat-num">{{ clubs|length }}</div>
         <div class="spine-stat-label">Clubs</div>
       </div>
-
       <div class="spine-stat">
         <div class="spine-stat-num">{{ reviews|length }}</div>
         <div class="spine-stat-label">Reviews</div>
       </div>
-
+      <div class="spine-stat">
+        <div class="spine-stat-num">{{ personal_lists|length }}</div>
+        <div class="spine-stat-label">Lists</div>
+      </div>
       <a href="{% url 'index' %}" class="back-link">Back to Home</a>
-
     </aside>
-
     <main class="profile-content">
-
-      <!-- Clubs -->
       <div class="clubs-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -57,7 +46,6 @@
             <div class="section-title">Clubs</div>
           </div>
         </div>
-
         {% if clubs %}
         {% for club in clubs %}
         <div class="club-item">{{ club.name }}</div>
@@ -66,10 +54,7 @@
         <div class="empty-state">No clubs yet.</div>
         {% endif %}
       </div>
-
       <div class="ornament-divider">✦</div>
-
-      <!-- Favourites -->
       <div class="books-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -78,14 +63,12 @@
             <div class="section-title">Favourite Books</div>
           </div>
         </div>
-
         {% if favourites %}
         {% for favourite in favourites %}
         <div class="book-item">
           <div>
-            <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">
-              {{ favourite.book.title }}
-            </a>
+            <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">{{ favourite.book.title
+              }}</a>
             <div>{{ favourite.book.author }}</div>
           </div>
         </div>
@@ -94,10 +77,7 @@
         <div class="empty-state">No favourites yet.</div>
         {% endif %}
       </div>
-
       <div class="ornament-divider">✦</div>
-
-      <!-- Reviews -->
       <div class="reviews-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -106,7 +86,6 @@
             <div class="section-title">Reviews</div>
           </div>
         </div>
-
         {% if reviews %}
         {% for review in reviews %}
         <div class="book-item">
@@ -121,10 +100,257 @@
         <div class="empty-state">No reviews yet.</div>
         {% endif %}
       </div>
-
+      <div class="ornament-divider">✦</div>
+      <div class="lists-section">
+        <div class="section-header">
+          <div class="section-icon"></div>
+          <div>
+            <span class="section-label">Curated</span>
+            <div class="section-title">Reading Lists</div>
+          </div>
+        </div>
+        {% if personal_lists %}
+        <div class="list-cards" id="personal-list-cards">
+          {% for lst in personal_lists %}
+          <div class="list-card" id="list-card-{{ lst.id }}">
+            <div class="list-card-header" onclick="toggleListCard({{ lst.id }})">
+              <div class="list-card-header-left">
+                <div class="list-card-name">{{ lst.name }}</div>
+                <div class="list-card-meta">{{ lst.books.count }} book{{ lst.books.count|pluralize }}</div>
+              </div>
+              <span class="list-card-chevron">▼</span>
+            </div>
+            <div class="list-card-body">
+              {% if lst.description %}
+              <p class="list-description">{{ lst.description }}</p>
+              {% endif %}
+              {% if is_owner %}
+              <div class="list-actions">
+                <a href="{% url 'edit_list' lst.id %}" class="list-action-link">Edit</a>
+                <a href="{% url 'delete_list' lst.id %}" class="list-action-link danger">Delete</a>
+              </div>
+              {% endif %}
+              <div class="list-books" id="list-books-{{ lst.id }}">
+                {% if lst.books.all %}
+                {% for book in lst.books.all %}
+                <div class="list-book-item">
+                  <div class="list-book-info">
+                    <a href="{% url 'book_view' book.hardcover_id %}">{{ book.title }}</a>
+                    <div class="list-book-author">{{ book.author }}</div>
+                  </div>
+                  {% if is_owner %}
+                  <form method="post" action="{% url 'list_detail' lst.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="remove_book_id" value="{{ book.hardcover_id }}">
+                    <button type="submit" name="remove_book" class="list-remove-btn">Remove</button>
+                  </form>
+                  {% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="list-empty-books">No books added yet.</div>
+                {% endif %}
+              </div>
+              {% if is_owner %}
+              <div class="list-add-book">
+                <div class="list-add-book-label">Add a book</div>
+                <form method="post" action="{% url 'list_detail' lst.id %}" id="add-book-form-{{ lst.id }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="book_id" id="selected-book-id-{{ lst.id }}">
+                  <div class="list-search-row">
+                    <input type="text" class="list-search-input" id="search-input-{{ lst.id }}"
+                      placeholder="Title or author…" autocomplete="off">
+                    <button type="button" class="list-search-btn" onclick="searchBooks({{ lst.id }})">Search</button>
+                    <button type="submit" name="add_book" class="list-add-confirm-btn" id="add-btn-{{ lst.id }}"
+                      disabled>Add</button>
+                  </div>
+                  <div class="list-search-status" id="search-status-{{ lst.id }}"></div>
+                  <div id="selected-preview-{{ lst.id }}" class="list-selected-preview" style="display:none;"></div>
+                  <div class="list-search-results" id="search-results-{{ lst.id }}"></div>
+                </form>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">No lists yet.</div>
+        {% endif %}
+        {% if club_lists %}
+        <div style="margin-top: 20px;">
+          <div class="list-add-book-label" style="margin-bottom:10px;">Club Lists</div>
+          <div class="list-cards">
+            {% for lst in club_lists %}
+            <div class="list-card" id="list-card-club-{{ lst.id }}">
+              <div class="list-card-header" onclick="toggleListCard('club-{{ lst.id }}')">
+                <div class="list-card-header-left">
+                  <div class="list-card-name">{{ lst.name }}</div>
+                  <div class="list-card-meta">{{ lst.club.name }} · {{ lst.books.count }} book{{
+                    lst.books.count|pluralize }}</div>
+                </div>
+                <span class="list-card-chevron">▼</span>
+              </div>
+              <div class="list-card-body">
+                {% if lst.description %}
+                <p class="list-description">{{ lst.description }}</p>
+                {% endif %}
+                <div class="list-books">
+                  {% for book in lst.books.all %}
+                  <div class="list-book-item">
+                    <div class="list-book-info">
+                      <a href="{% url 'book_view' book.hardcover_id %}">{{ book.title }}</a>
+                      <div class="list-book-author">{{ book.author }}</div>
+                    </div>
+                  </div>
+                  {% empty %}
+                  <div class="list-empty-books">No books in this list yet.</div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% if is_owner %}
+        <button class="create-list-btn" onclick="openCreateModal()">
+          <span class="plus-icon">+</span> New List
+        </button>
+        {% endif %}
+      </div>
     </main>
   </div>
 </div>
-
+{% if is_owner %}
+<div class="modal-overlay" id="create-list-modal" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCreateModal()">✕</button>
+    <div class="modal-title">New Reading List</div>
+    <form method="post" action="{% url 'create_list' %}">
+      {% csrf_token %}
+      <div class="modal-field">
+        <label class="modal-label" for="modal-list-name">List Name</label>
+        <input type="text" id="modal-list-name" name="name" class="modal-input" placeholder="e.g. Summer Reads" required
+          autocomplete="off">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="modal-list-desc">Description <span style="opacity:.4">(optional)</span></label>
+        <textarea id="modal-list-desc" name="description" class="modal-textarea"
+          placeholder="What's this list about?"></textarea>
+      </div>
+      <button type="submit" class="modal-submit-btn">Create List</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+  function toggleListCard(id) {
+    const card = document.getElementById('list-card-' + id);
+    card.classList.toggle('open');
+  }
+  function openCreateModal() {
+    document.getElementById('create-list-modal').classList.add('active');
+    document.getElementById('modal-list-name').focus();
+  }
+  function closeCreateModal() {
+    document.getElementById('create-list-modal').classList.remove('active');
+  }
+  function handleModalOverlayClick(e) {
+    if (e.target === document.getElementById('create-list-modal')) {
+      closeCreateModal();
+    }
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeCreateModal();
+  });
+  function escapeHtml(text) {
+    return $('<div>').text(text || '').html();
+  }
+  function searchBooks(listId) {
+    const query = $('#search-input-' + listId).val().trim();
+    const $results = $('#search-results-' + listId);
+    const $status = $('#search-status-' + listId);
+    const $preview = $('#selected-preview-' + listId);
+    const $addBtn = $('#add-btn-' + listId);
+    const $hiddenId = $('#selected-book-id-' + listId);
+    $results.empty();
+    $preview.hide();
+    $addBtn.prop('disabled', true);
+    $hiddenId.val('');
+    if (!query) {
+      $status.text('Please enter a title or author.');
+      return;
+    }
+    $status.text('Searching…');
+    $.ajax({
+      url: "{% url 'search_json' %}",
+      method: 'GET',
+      data: { query: query },
+      success: function (response) {
+        $status.text('');
+        const books = (response.books || []).slice(0, 10);
+        if (!books.length) {
+          $results.html('<div class="list-empty-books">No results found.</div>');
+          return;
+        }
+        let html = '';
+        books.forEach(function (book) {
+          const title = escapeHtml(book.title || 'Untitled');
+          const authors = escapeHtml((book.authors || []).join(', '));
+          const workid = escapeHtml(book.workid || '');
+          const cover = book.cover
+            ? `<img src="${escapeHtml(book.cover)}" class="list-result-cover" alt="">`
+            : `<div class="list-result-cover"></div>`;
+          html += `
+          <div class="list-result-item"
+               data-workid="${workid}"
+               data-title="${title}"
+               data-authors="${authors}"
+               data-listid="${listId}"
+               onclick="selectBook(this)">
+            ${cover}
+            <div>
+              <div class="list-result-title">${title}</div>
+              <div class="list-result-author">${authors || 'Unknown author'}</div>
+            </div>
+          </div>`;
+        });
+        $results.html(html);
+      },
+      error: function () {
+        $status.text('Search failed. Please try again.');
+      }
+    });
+  }
+  function selectBook(el) {
+    const listId = el.dataset.listid;
+    const workid = el.dataset.workid;
+    const title = el.dataset.title;
+    const authors = el.dataset.authors;
+    $('#selected-book-id-' + listId).val(workid);
+    $('#selected-preview-' + listId)
+      .text('Selected: ' + title + (authors ? ' — ' + authors : ''))
+      .show();
+    $('#add-btn-' + listId).prop('disabled', false);
+    $('#search-results-' + listId + ' .list-result-item').removeClass('selected');
+    $(el).addClass('selected');
+  }
+  $(document).on('input', '.list-search-input', function () {
+    const listId = this.id.replace('search-input-', '');
+    $('#selected-book-id-' + listId).val('');
+    $('#selected-preview-' + listId).hide();
+    $('#add-btn-' + listId).prop('disabled', true);
+    $('#search-results-' + listId + ' .list-result-item').removeClass('selected');
+  });
+  $(document).on('keypress', '.list-search-input', function (e) {
+    if (e.which === 13) {
+      e.preventDefault();
+      const listId = this.id.replace('search-input-', '');
+      searchBooks(listId);
+    }
+  });
+</script>
 {% endblock %}
 {% endblock %}

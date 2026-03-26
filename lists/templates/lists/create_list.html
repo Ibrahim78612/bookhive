@@ -1,19 +1,29 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content_wrapper %}
 {% block content %}
-
-<div class="create-list-page">
-  <h1>Create New List</h1>
-  <form method="post">
-    {% csrf_token %}
-    <label for="name">List Name:</label>
-    <input type="text" id="name" name="name" required>
-    <label for="description">Description (optional):</label>
-    <textarea id="description" name="description"></textarea>
-    <button type="submit">Create List</button>
-  </form>
+<link rel="stylesheet" href="{% static 'lists/css/list_forms.css' %}">
+<div class="list-form-page">
+  <div class="list-form-box">
+    <div class="list-form-eyebrow">New List</div>
+    <h1 class="list-form-title">Create Reading List</h1>
+    <form method="post" class="list-form">
+      {% csrf_token %}
+      <div class="list-form-field">
+        <label class="list-form-label" for="name">List Name</label>
+        <input type="text" id="name" name="name" class="list-form-input" placeholder="e.g. Summer Reads" required
+          autocomplete="off">
+      </div>
+      <div class="list-form-field">
+        <label class="list-form-label" for="description">Description <span class="optional">(optional)</span></label>
+        <textarea id="description" name="description" class="list-form-textarea"
+          placeholder="What's this list about?"></textarea>
+      </div>
+      <div class="list-form-actions">
+        <button type="submit" class="btn-primary">Create List</button>
+      </div>
+    </form>
+  </div>
 </div>
-
 {% endblock %}
 {% endblock %}

@@ -1,0 +1,381 @@
+.lists-section {
+    margin-top: 0;
+}
+.create-list-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid rgba(220, 180, 100, 0.35);
+    color: rgba(220, 180, 100, 0.85);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    margin-top: 14px;
+}
+.create-list-btn:hover {
+    background: rgba(220, 180, 100, 0.1);
+    border-color: rgba(220, 180, 100, 0.65);
+    color: rgba(220, 180, 100, 1);
+}
+.create-list-btn .plus-icon {
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 300;
+}
+.list-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+.list-card {
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.02);
+    transition: border-color 0.2s;
+}
+.list-card:hover {
+    border-color: rgba(220, 180, 100, 0.2);
+}
+.list-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+}
+.list-card-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.list-card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.02em;
+}
+.list-card-meta {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+}
+.list-card-chevron {
+    font-size: 11px;
+    color: rgba(220, 180, 100, 0.5);
+    transition: transform 0.25s;
+}
+.list-card.open .list-card-chevron {
+    transform: rotate(180deg);
+}
+.list-card-body {
+    display: none;
+    padding: 0 18px 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.list-card.open .list-card-body {
+    display: block;
+}
+.list-description {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 12px 0 16px;
+    line-height: 1.6;
+    font-style: italic;
+}
+.list-books {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.list-book-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.list-book-info a {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 2px;
+}
+.list-book-info a:hover {
+    color: rgba(220, 180, 100, 0.9);
+}
+.list-book-author {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.1em;
+}
+.list-remove-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 80, 80, 0.25);
+    color: rgba(255, 80, 80, 0.5);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.list-remove-btn:hover {
+    border-color: rgba(255, 80, 80, 0.6);
+    color: rgba(255, 80, 80, 0.9);
+    background: rgba(255, 80, 80, 0.07);
+}
+.list-empty-books {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.2);
+    font-style: italic;
+    margin-bottom: 14px;
+}
+.list-actions {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+.list-action-link {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(220, 180, 100, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.list-action-link:hover {
+    color: rgba(220, 180, 100, 0.9);
+}
+.list-action-link.danger {
+    color: rgba(255, 80, 80, 0.4);
+}
+.list-action-link.danger:hover {
+    color: rgba(255, 80, 80, 0.8);
+}
+.list-add-book {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 14px;
+    margin-top: 4px;
+}
+.list-add-book-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+}
+.list-search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.list-search-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.list-search-input:focus {
+    border-color: rgba(220, 180, 100, 0.4);
+}
+.list-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+.list-search-btn,
+.list-add-confirm-btn {
+    background: transparent;
+    border: 1px solid rgba(220, 180, 100, 0.35);
+    color: rgba(220, 180, 100, 0.8);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.list-search-btn:hover,
+.list-add-confirm-btn:hover {
+    background: rgba(220, 180, 100, 0.1);
+    border-color: rgba(220, 180, 100, 0.65);
+}
+.list-add-confirm-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+.list-search-status {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 8px;
+    min-height: 14px;
+    font-style: italic;
+}
+.list-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.list-search-results::-webkit-scrollbar {
+    width: 4px;
+}
+.list-search-results::-webkit-scrollbar-track {
+    background: transparent;
+}
+.list-search-results::-webkit-scrollbar-thumb {
+    background: rgba(220, 180, 100, 0.2);
+}
+.list-result-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+.list-result-item:hover {
+    background: rgba(220, 180, 100, 0.05);
+    border-color: rgba(220, 180, 100, 0.2);
+}
+.list-result-item.selected {
+    background: rgba(220, 180, 100, 0.08);
+    border-color: rgba(220, 180, 100, 0.45);
+}
+.list-result-cover {
+    width: 32px;
+    height: 46px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.04);
+}
+.list-result-title {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 2px;
+}
+.list-result-author {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+}
+.list-selected-preview {
+    font-size: 11px;
+    color: rgba(220, 180, 100, 0.7);
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    border-left: 2px solid rgba(220, 180, 100, 0.4);
+    background: rgba(220, 180, 100, 0.04);
+}
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.active {
+    display: flex;
+}
+.modal-box {
+    background: #111;
+    border: 1px solid rgba(220, 180, 100, 0.25);
+    padding: 36px 40px;
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+}
+.modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+}
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.modal-close:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+.modal-field {
+    margin-bottom: 20px;
+}
+.modal-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 8px;
+}
+.modal-input,
+.modal-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.modal-input:focus,
+.modal-textarea:focus {
+    border-color: rgba(220, 180, 100, 0.45);
+}
+.modal-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+.modal-submit-btn {
+    width: 100%;
+    background: rgba(220, 180, 100, 0.1);
+    border: 1px solid rgba(220, 180, 100, 0.45);
+    color: rgba(220, 180, 100, 0.9);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+}
+.modal-submit-btn:hover {
+    background: rgba(220, 180, 100, 0.18);
+    border-color: rgba(220, 180, 100, 0.7);
+}

@@ -6,10 +6,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # 👇 users FIRST
     path('', include('users.urls')),
 
-    # 👇 core AFTER
     path('', include('core.urls')),
 
     path('books/', include('books.urls')),

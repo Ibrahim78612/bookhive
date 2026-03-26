@@ -46,13 +46,16 @@ def cover_from_workid(work_id, is_thumbnail=True):
 # for now this is a helper function to help find book ids if you need test data for example
 # will be expanded to help implement search later
 @use_search_string
-def fetch_with_title(title):
+def fetch_with_title(title, limit=10):
     """
-    rough function to help with finding openlibrary ids during development
-    will be refined later to help with adding search
+    Searches OpenLibrary with partial/fuzzy matching.
+    Returns top `limit` results (default 10) so users don't need exact titles.
     """
-    fetch_url = "https://openlibrary.org/search.json?q="+title
-    process_docs = lambda x: [strip_search_result_data(i) for i in x["docs"]]
+    encoded_title = title.replace(" ", "+")
+    fetch_url = f"https://openlibrary.org/search.json?q={encoded_title}&limit={limit}"
+    
+    process_docs = lambda x: [strip_search_result_data(i) for i in x["docs"][:limit]]
+    
     try:
         books_data = json_from_url(fetch_url, processing_func=process_docs)
     except Exception as e:
