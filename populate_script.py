@@ -28,12 +28,10 @@ def populate():
         for work_id in books:
             book_data = fetch_from_workid(work_id)
             print(f"fetched {book_data['title']}")
-            Book.objects.get_or_create(
-                    hardcover_id=work_id,
-                    defaults = {
-                        "title": book_data.get("title", "Unknown"),
-                        "author": ", ".join(book_data.get("authors", [])),
-                        }
+            add_book(
+                    work_id,
+                    book_data.get("title", "Unknown"),
+                    ", ".join(book_data.get("authors", []))
                     )
 
 
@@ -105,6 +103,15 @@ def add_list(name, desc, creator, book_list):
     listed = List.objects.get_or_create(name=name, user=user)[0]
     listed.description = desc
     listed.books.add(*Book.objects.filter(hardcover_id__in=book_list))
+
+def add_book(work_id, title, authors):
+            Book.objects.get_or_create(
+                    hardcover_id=work_id,
+                    defaults = {
+                        "title": title,
+                        "author": authors,
+                        }
+                    )
 
 if __name__ == "__main__":
     print("Starting BookHive population script..")

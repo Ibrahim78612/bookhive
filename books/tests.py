@@ -1,32 +1,62 @@
-from django.test import TestCase
-from olapi.main import fetch_from_workid, cover_from_workid, fetch_with_title
+from django.test import TestCase, Client
+from unittest.mock import patch
+
+import olapi.main
 from olapi.ol_api_helpers import subject_filterer, rename_field, strip_book_data, strip_search_result_data, validate_workid
+from populate_script import add_user, add_review, add_book
+import json
 
 # Create your tests here.
 
 class OlApiMainTests(TestCase):
     """
-    Tests of the OLAPI helper functions.
+    Tests of the OLAPI main functions.
     """
     # Tests for the cover_from_workid function.
-    def no_cover_when_no_book(self):
-        pass
+    @patch("olapi.main.fetch_from_workid")
+    def test_no_cover_when_no_book(self, mock_fetch):
+        mock_fetch.return_value = None
+        cover = olapi.main.cover_from_workid("OL82586W")
+        self.assertEqual(cover, None)
 
-    def no_cover_when_book_without_cover(self):
-        pass
+    @patch("olapi.main.fetch_from_workid")
+    def test_no_cover_when_book_without_cover(self, mock_fetch):
+        mock_fetch.return_value = {
+                "workid": "OL1W",
+                "title": "Sample Book",
+                "authors": ["Jane Sampleson"],
+                "first_publish_date": "2000",
+                "covers": None,
+                "subjects": ["Sample", "Testing"]
+                }
+        cover = olapi.main.cover_from_workid("OL1W")
+        self.assertEqual(cover, None)
 
-    def is_thumbnail_working(self):
-        pass
+    @patch("olapi.main.fetch_from_workid")
+    def test_thumbnail_working(self, mock_fetch):
+        mock_fetch.return_value = {
+                "workid": "OL1W",
+                "title": "Sample Book",
+                "authors": ["Jane Sampleson"],
+                "first_publish_date": "2000",
+                "covers": "1",
+                "subjects": ["Sample", "Testing"]
+                }
+        cover = olapi.main.cover_from_workid("OL1W")
+        self.assertEqual(cover, "https://covers.openlibrary.org/b/id/1-M.jpg")
 
-    def is_non_thumbnail_working(self):
-        pass
-
-    # Tests for the raise_errors flag of fetch_with_workid.
-    def check_if_error_raised():
-        pass
-
-    def check_if_error_ignored():
-        pass
+    @patch("olapi.main.fetch_from_workid")
+    def test_non_thumbnail_working(self, mock_fetch):
+        mock_fetch.return_value = {
+                "workid": "OL1W",
+                "title": "Sample Book",
+                "authors": ["Jane Sampleson"],
+                "first_publish_date": "2000",
+                "covers": "1",
+                "subjects": ["Sample", "Testing"]
+                }
+        cover = olapi.main.cover_from_workid("OL1W", is_thumbnail=False)
+        self.assertEqual(cover, "https://covers.openlibrary.org/b/id/1-L.jpg")
 
 class OlApiHelperTests(TestCase):
     def test_invalid_workids(self):
@@ -44,7 +74,7 @@ class OlApiHelperTests(TestCase):
         self.assertTrue(len(genres) == 0)
 
     def test_punctuation_genres_removed(self):
-        genres = ["This should be removed.", "This, too", "...!", "y.e.p.", "thats_right", "(and this)"]
+        genres = ["This should be removed.", "This, too", "well: that's gone", "y.e.p.", "thats_right", "(and this)"]
         genres = subject_filterer(genres)
         self.assertTrue(len(genres) == 0)
 
@@ -101,18 +131,20 @@ class BookViewTests(TestCase):
     """
     Whichever book view tests are possible to do on Django's end (pretty much just reviews)
     """
-    no_review_book = ""
-    has_reviews_book = ""
-
-    def reviewed_book_shows_reviews(self):
+    def test_reviewed_book_shows_reviews(self):
         "Checks if a book with reviews shows its reviews."
-        pass
+        add_book("OL1W", "Sample Book", "Jane Sampleson")
+        add_user("JaneSampleson")
+        add_review("As an unbiased third party this book is great!", 5, "JaneSampleson", "OL1W")
+        c = Client()
+        resp = c.get('/books/OL1W/')
+        self.assertEqual(resp.status_code, 200, f"page doesnt exist")
+        self.assertContains(resp, '<div class="review">')
 
-
-    def unreviewed_book_says_no_reviews(self):
+    def test_unreviewed_book_shows_no_reviews(self):
         "Checks if the view for a book with no reviews says it has no reviews."
-        pass
-
-    def is_ajax_accurate(self):
-        "Checks the JSON endpoint used for AJAX against fetch_from_workid to ensure they match"
-        pass
+        c = Client()
+        resp = c.get('/books/OL2W/')
+        self.assertEqual(resp.status_code, 200, f"page doesnt exist")
+        self.assertNotContains(resp, '<div class="review">')
+        self.assertContains(resp, "<p>No reviews yet.</p>")
