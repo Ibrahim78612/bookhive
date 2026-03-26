@@ -4,6 +4,7 @@
 {% block content_wrapper %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'clubs/css/club_detail.css' %}">
+<script defer src="{% static 'search/js/dropdown.js' %}"></script>
 
 <div class="auth-page">
     <div class="bg-grid"></div>
@@ -77,9 +78,175 @@
                 {% endfor %}
             </ul>
 
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 30px 0;">
+
+            <h3 style="font-family: 'Playfair Display', serif; color: #f5f0e8; margin-bottom: 20px;">
+                Club Reading List
+            </h3>
+
+            <p>
+                <a href="{% url 'list_detail' club_list.id %}">{{ club_list.name }}</a>
+            </p>
+
+            {% if club_list.description %}
+            <p>{{ club_list.description }}</p>
+            {% endif %}
+
+            {% if can_edit_club_list %}
+            <div class="add-book-form" style="margin: 24px 0;">
+                <h4 style="color: #f5f0e8; margin-bottom: 12px;">Add Book</h4>
+
+                <form method="post" action="{% url 'list_detail' club_list.id %}" id="add-book-form">
+                    {% csrf_token %}
+
+                    <div class="book-search-toolbar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;">
+                        <input
+                            type="text"
+                            id="book-search-input"
+                            placeholder="Search by title or author"
+                            autocomplete="off"
+                            style="flex: 1; min-width: 260px;"
+                        >
+                        <button type="button" id="search-books-btn">Search</button>
+                        <button type="submit" name="add_book" id="add-book-btn" disabled>Add Book</button>
+                    </div>
+
+                    <div id="search-status" class="search-status"></div>
+
+                    <input type="hidden" name="book_id" id="selected-book-id" required>
+
+                    <div id="selected-book-preview" class="selected-book-preview" style="display: none;">
+                        <strong>Selected:</strong>
+                        <span id="selected-book-text"></span>
+                    </div>
+
+                    <div id="search-results-wrapper" class="search-results-wrapper">
+                        <div id="search-results" class="search-results"></div>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="books-list">
+                <h4 style="color: #f5f0e8; margin-bottom: 16px;">Books in this list</h4>
+
+                {% if club_list.books.all %}
+                <ul>
+                    {% for book in club_list.books.all %}
+                    <li style="margin-bottom: 10px;">
+                        <a href="{% url 'book_view' book.hardcover_id %}">{{ book.title }}</a> by {{ book.author }}
+
+                        {% if can_edit_club_list %}
+                        <form method="post" action="{% url 'list_detail' club_list.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="remove_book_id" value="{{ book.hardcover_id }}">
+                            <button type="submit" name="remove_book">Remove</button>
+                        </form>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No books in this list yet.</p>
+                {% endif %}
+            </div>
+
         </div>
     </div>
 </div>
+
+{% if can_edit_club_list %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+  $(document).ready(function () {
+    function escapeHtml(text) {
+      return $('<div>').text(text || '').html();
+    }
+
+    function clearSelection() {
+      $('#selected-book-id').val('');
+      $('#selected-book-text').text('');
+      $('#selected-book-preview').hide();
+      $('#add-book-btn').prop('disabled', true);
+      $('.search-result-item').removeClass('selected');
+    }
+
+    $('#search-books-btn').on('click', function () {
+      const query = $('#book-search-input').val().trim();
+
+      $('#search-results').empty();
+      clearSelection();
+
+      if (!query) {
+        $('#search-status').text('Please enter a title or author.');
+        return;
+      }
+
+      $('#search-status').text('Searching...');
+
+      $.get("{% url 'search_json' %}", { query: query })
+        .done(function (data) {
+          const books = (data && data.books) || [];
+          $('#search-results').empty();
+
+          if (!books.length) {
+            $('#search-status').text('No results found.');
+            return;
+          }
+
+          $('#search-status').text('Select a book to add.');
+
+          books.forEach(function (book) {
+            const workid = book.workid || '';
+            const title = book.title || 'Untitled';
+            const authors = (book.authors || []).join(', ');
+            const cover = book.cover || '';
+
+            const item = $(`
+              <button type="button" class="search-result-item" data-workid="${escapeHtml(workid)}" data-title="${escapeHtml(title)}" data-authors="${escapeHtml(authors)}">
+                ${cover ? `<img src="${escapeHtml(cover)}" alt="${escapeHtml(title)} cover" class="result-cover">` : ''}
+                <div class="result-meta">
+                  <div class="result-title">${escapeHtml(title)}</div>
+                  <div class="result-author">${escapeHtml(authors)}</div>
+                </div>
+              </button>
+            `);
+
+            $('#search-results').append(item);
+          });
+        })
+        .fail(function () {
+          $('#search-status').text('Search failed. Please try again.');
+        });
+    });
+
+    $(document).on('click', '.search-result-item', function () {
+      const workid = $(this).data('workid');
+      const title = $(this).data('title');
+      const authors = $(this).data('authors');
+
+      $('#selected-book-id').val(workid);
+      $('#selected-book-text').text(title + (authors ? ' by ' + authors : ''));
+      $('#selected-book-preview').show();
+      $('#add-book-btn').prop('disabled', false);
+
+      $('.search-result-item').removeClass('selected');
+      $(this).addClass('selected');
+    });
+
+    $('#book-search-input').on('input', function () {
+      clearSelection();
+    });
+
+    $('#book-search-input').on('keypress', function (e) {
+      if (e.which === 13) {
+        e.preventDefault();
+        $('#search-books-btn').click();
+      }
+    });
+  });
+</script>
+{% endif %}
 
 {% endblock %}
 {% endblock %}

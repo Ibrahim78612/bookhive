@@ -11,21 +11,15 @@ def list_detail(request, list_id):
     list_obj = get_object_or_404(List, id=list_id)
     can_edit = request.user.is_authenticated and list_obj.can_edit(request.user)
 
-    # Allow viewing for everyone (public by default)
-    # Editing only for list owner (or club owner for club lists)
-
     if request.method == 'POST' and can_edit:
         if 'add_book' in request.POST:
             book_id = request.POST.get('book_id')
 
             if book_id:
                 try:
-                    # First try to find the book in the local database
                     book = Book.objects.get(hardcover_id=book_id)
 
                 except Book.DoesNotExist:
-                    # If the book is not stored locally yet,
-                    # fetch it from OpenLibrary and create it
                     try:
                         book_data = fetch_from_workid(book_id)
                         book = Book.objects.create(
@@ -72,6 +66,7 @@ def edit_list(request, list_id):
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description', '')
+
         if not name:
             messages.error(request, "List name is required.")
         else:
@@ -94,10 +89,14 @@ def delete_list(request, list_id):
         messages.error(request, "You don't have permission to delete this list.")
         return redirect('list_detail', list_id=list_id)
 
+    if list_obj.club:
+        messages.error(request, "Club lists can't be deleted.")
+        return redirect('list_detail', list_id=list_id)
+
     if request.method == 'POST':
         list_obj.delete()
         messages.success(request, "List deleted.")
-        return redirect('my_profile')
+        return redirect('profile')
 
     return render(request, 'lists/delete_list.html', {
         'list': list_obj,
@@ -106,13 +105,29 @@ def delete_list(request, list_id):
 
 @login_required
 def create_list(request):
+    next_url = request.GET.get('next') or request.POST.get('next')
+    work_id = request.GET.get('work_id') or request.POST.get('work_id')
+
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description', '')
+
         if name:
             list_obj = List.objects.create(user=request.user, name=name, description=description)
             messages.success(request, f"Created list '{name}'.")
+
+            if next_url and work_id:
+                messages.info(request, "Your new list is ready. You can now add this book to it.")
+                return redirect(next_url)
+
+            if next_url:
+                return redirect(next_url)
+
             return redirect('list_detail', list_id=list_obj.id)
         else:
             messages.error(request, "List name is required.")
-    return render(request, 'lists/create_list.html')
+
+    return render(request, 'lists/create_list.html', {
+        'next': next_url,
+        'work_id': work_id,
+    })

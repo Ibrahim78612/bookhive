@@ -109,73 +109,26 @@
             <div class="section-title">Reading Lists</div>
           </div>
         </div>
-        {% if personal_lists %}
-        <div class="list-cards" id="personal-list-cards">
-          {% for lst in personal_lists %}
-          <div class="list-card" id="list-card-{{ lst.id }}">
-            <div class="list-card-header" onclick="toggleListCard({{ lst.id }})">
-              <div class="list-card-header-left">
-                <div class="list-card-name">{{ lst.name }}</div>
-                <div class="list-card-meta">{{ lst.books.count }} book{{ lst.books.count|pluralize }}</div>
-              </div>
-              <span class="list-card-chevron">▼</span>
-            </div>
-            <div class="list-card-body">
-              {% if lst.description %}
-              <p class="list-description">{{ lst.description }}</p>
-              {% endif %}
-              {% if is_owner %}
-              <div class="list-actions">
-                <a href="{% url 'edit_list' lst.id %}" class="list-action-link">Edit</a>
-                <a href="{% url 'delete_list' lst.id %}" class="list-action-link danger">Delete</a>
-              </div>
-              {% endif %}
-              <div class="list-books" id="list-books-{{ lst.id }}">
-                {% if lst.books.all %}
-                {% for book in lst.books.all %}
-                <div class="list-book-item">
-                  <div class="list-book-info">
-                    <a href="{% url 'book_view' book.hardcover_id %}">{{ book.title }}</a>
-                    <div class="list-book-author">{{ book.author }}</div>
-                  </div>
-                  {% if is_owner %}
-                  <form method="post" action="{% url 'list_detail' lst.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="remove_book_id" value="{{ book.hardcover_id }}">
-                    <button type="submit" name="remove_book" class="list-remove-btn">Remove</button>
-                  </form>
-                  {% endif %}
-                </div>
-                {% endfor %}
-                {% else %}
-                <div class="list-empty-books">No books added yet.</div>
-                {% endif %}
-              </div>
-              {% if is_owner %}
-              <div class="list-add-book">
-                <div class="list-add-book-label">Add a book</div>
-                <form method="post" action="{% url 'list_detail' lst.id %}" id="add-book-form-{{ lst.id }}">
-                  {% csrf_token %}
-                  <input type="hidden" name="book_id" id="selected-book-id-{{ lst.id }}">
-                  <div class="list-search-row">
-                    <input type="text" class="list-search-input" id="search-input-{{ lst.id }}"
-                      placeholder="Title or author…" autocomplete="off">
-                    <button type="button" class="list-search-btn" onclick="searchBooks({{ lst.id }})">Search</button>
-                    <button type="submit" name="add_book" class="list-add-confirm-btn" id="add-btn-{{ lst.id }}"
-                      disabled>Add</button>
-                  </div>
-                  <div class="list-search-status" id="search-status-{{ lst.id }}"></div>
-                  <div id="selected-preview-{{ lst.id }}" class="list-selected-preview" style="display:none;"></div>
-                  <div class="list-search-results" id="search-results-{{ lst.id }}"></div>
-                </form>
-              </div>
-              {% endif %}
-            </div>
-          </div>
+        {% if personal_lists or club_lists %}
+        <ul class="lists-list">
+          {% for list in personal_lists %}
+          <li class="list-item">
+            <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
+            <span>(Personal - {{ list.books.count }} books)</span>
+          </li>
           {% endfor %}
-        </div>
+
+          {% for list in club_lists %}
+          <li class="list-item">
+            <a href="{% url 'list_detail' list.id %}">{{ list.name }}</a>
+            <span>({{ list.club.name }} - {{ list.books.count }} books)</span>
+          </li>
+          {% endfor %}
+        </ul>
         {% else %}
-        <div class="empty-state">No lists yet.</div>
+        <div class="empty-state">
+          <p>No lists yet.</p>
+        </div>
         {% endif %}
         {% if club_lists %}
         <div style="margin-top: 20px;">

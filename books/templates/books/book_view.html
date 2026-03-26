@@ -35,6 +35,32 @@
 
         {% if user.is_authenticated %}
 
+        {% if user_lists %}
+        <form method="post" action="{% url 'add_book_to_list' work_id %}" class="add-to-list-form" id="add-to-list-form">
+          {% csrf_token %}
+          <input type="hidden" name="source" value="book">
+          <input type="hidden" name="next" value="{% url 'book_view' work_id %}">
+
+          <label for="list_id">Add to list:</label>
+          <select name="list_id" id="list_id" required>
+            <option value="" disabled selected>Select a list</option>
+            {% for list in user_lists %}
+              <option value="{{ list.id }}">
+                {{ list.name }}{% if list.club %} ({{ list.club.name }}){% endif %}
+              </option>
+            {% endfor %}
+            <option value="__create_new__">+ Create new list…</option>
+          </select>
+          <button type="submit">Add</button>
+        </form>
+        {% else %}
+        <div style="margin-bottom: 12px;">
+          <a href="{% url 'create_list' %}?next={% url 'book_view' work_id %}&work_id={{ work_id }}">
+            Create your first list
+          </a>
+        </div>
+        {% endif %}
+
         <a href="{% url 'book_reviews' work_id %}">Write a Review</a>
 
         {% if is_favourite %}
@@ -103,6 +129,21 @@
     </div>
   </div>
 </div>
+
+{% if user.is_authenticated %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('list_id');
+    if (!select) return;
+
+    select.addEventListener('change', function () {
+      if (this.value === '__create_new__') {
+        window.location.href = "{% url 'create_list' %}?next={% url 'book_view' work_id %}&work_id={{ work_id }}";
+      }
+    });
+  });
+</script>
+{% endif %}
 
 {% endblock %}
 {% endblock %}

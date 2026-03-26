@@ -3,6 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from .models import Club
 from .forms import ClubForm
+from lists.models import List
+
+
+def ensure_club_list(club):
+    return List.objects.get_or_create(
+        club=club,
+        defaults={
+            'user': club.owner,
+            'name': f"{club.name} Reading List",
+            'description': f"Shared reading list for {club.name} club",
+        },
+    )[0]
 
 
 def club_list(request):
@@ -19,8 +31,12 @@ def club_list(request):
 
 def club_detail(request, id):
     club = get_object_or_404(Club, id=id)
+    club_list_obj = ensure_club_list(club)
+
     return render(request, "clubs/club_detail.html", {
-        "club": club
+        "club": club,
+        "club_list": club_list_obj,
+        "can_edit_club_list": request.user.is_authenticated and club_list_obj.can_edit(request.user),
     })
 
 
@@ -47,6 +63,7 @@ def club_create(request):
             club.owner = request.user
             club.save()
             club.members.add(request.user)
+            ensure_club_list(club)
             return redirect("club_detail", id=club.id)
     else:
         form = ClubForm()
@@ -63,6 +80,8 @@ def club_edit(request, id):
 
     if club.owner != request.user:
         raise PermissionDenied
+
+    ensure_club_list(club)
 
     if request.method == "POST":
         form = ClubForm(request.POST, instance=club)

@@ -8,12 +8,20 @@
 <div class="list-page">
   <div class="list-header">
     <h1>{{ list.name }}</h1>
+
     {% if list.description %}
     <p>{{ list.description }}</p>
     {% endif %}
+
     <p>Created by {{ list.user.username }}{% if list.club %} for club {{ list.club.name }}{% endif %}</p>
+
     {% if can_edit %}
-    <p><a href="{% url 'edit_list' list.id %}">Edit this list</a> · <a href="{% url 'delete_list' list.id %}">Delete this list</a></p>
+      <p>
+        <a href="{% url 'edit_list' list.id %}">Edit this list</a>
+        {% if not list.club %}
+          · <a href="{% url 'delete_list' list.id %}">Delete this list</a>
+        {% endif %}
+      </p>
     {% endif %}
   </div>
 
@@ -35,7 +43,7 @@
         <button type="submit" name="add_book" id="add-book-btn" disabled>Add Book</button>
       </div>
 
-      <div id="search-status" class="search-status"></div>
+      <div id="search-status" class="search-status">Select a book to add.</div>
 
       <input type="hidden" name="book_id" id="selected-book-id" required>
 
@@ -53,6 +61,7 @@
 
   <div class="books-list">
     <h2>Books in this list</h2>
+
     {% if list.books.all %}
     <ul>
       {% for book in list.books.all %}
@@ -103,52 +112,40 @@
 
       $('#search-status').text('Searching...');
 
-      $.ajax({
-        url: "{% url 'search_json' %}",
-        method: "GET",
-        data: { query: query },
-        success: function (response) {
-          $('#search-status').text('');
-
-          const books = (response.books || []).slice(0, 12);
+      $.get("{% url 'search_json' %}", { query: query })
+        .done(function (data) {
+          const books = (data && data.books) || [];
+          $('#search-results').empty();
 
           if (!books.length) {
-            $('#search-results').html('<p>No results found.</p>');
+            $('#search-status').text('No results found.');
             return;
           }
 
-          let html = '';
+          $('#search-status').text('Select a book to add.');
 
           books.forEach(function (book) {
-            const title = escapeHtml(book.title || 'Untitled');
-            const authors = escapeHtml((book.authors || []).join(', '));
-            const year = escapeHtml(book.first_publish_date || '');
-            const workid = escapeHtml(book.workid || '');
-            const cover = book.cover
-              ? `<img src="${escapeHtml(book.cover)}" alt="${title}" class="search-result-cover">`
-              : `<div class="search-result-cover"></div>`;
+            const workid = book.workid || '';
+            const title = book.title || 'Untitled';
+            const authors = (book.authors || []).join(', ');
+            const cover = book.cover || '';
 
-            html += `
-              <div class="search-result-item"
-                   data-workid="${workid}"
-                   data-title="${title}"
-                   data-authors="${authors}">
-                ${cover}
+            const item = $(`
+              <button type="button" class="search-result-item" data-workid="${escapeHtml(workid)}" data-title="${escapeHtml(title)}" data-authors="${escapeHtml(authors)}">
+                ${cover ? `<img src="${escapeHtml(cover)}" alt="${escapeHtml(title)} cover" class="search-result-cover">` : `<div class="search-result-cover no-cover"></div>`}
                 <div class="search-result-meta">
-                  <div class="search-result-title">${title}</div>
-                  <div class="search-result-author">${authors || 'Unknown author'}</div>
-                  <div class="search-result-year">${year}</div>
+                  <div class="search-result-title">${escapeHtml(title)}</div>
+                  <div class="search-result-author">${escapeHtml(authors)}</div>
                 </div>
-              </div>
-            `;
-          });
+              </button>
+            `);
 
-          $('#search-results').html(html);
-        },
-        error: function () {
+            $('#search-results').append(item);
+          });
+        })
+        .fail(function () {
           $('#search-status').text('Search failed. Please try again.');
-        }
-      });
+        });
     });
 
     $(document).on('click', '.search-result-item', function () {
@@ -167,6 +164,7 @@
 
     $('#book-search-input').on('input', function () {
       clearSelection();
+      $('#search-status').text('Select a book to add.');
     });
 
     $('#book-search-input').on('keypress', function (e) {
