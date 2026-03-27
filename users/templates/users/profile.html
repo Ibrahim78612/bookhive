@@ -4,11 +4,14 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
 <link rel="stylesheet" href="{% static 'lists/css/lists_profile.css' %}">
+
 <div class="profile-page">
   <div class="profile-layout">
+
     <aside class="profile-spine">
       <div class="spine-eyebrow">Member Profile</div>
       <div class="spine-username">{{ profile_user.username }}</div>
+
       {% if not is_owner and user.is_authenticated %}
       <div class="friend-button">
         {% if friend_status == 'accepted' %}
@@ -22,22 +25,29 @@
         {% endif %}
       </div>
       {% endif %}
+
       <div class="spine-sub">Reader & Curator</div>
+
       <div class="spine-stat">
         <div class="spine-stat-num">{{ clubs|length }}</div>
         <div class="spine-stat-label">Clubs</div>
       </div>
+
       <div class="spine-stat">
         <div class="spine-stat-num">{{ reviews|length }}</div>
         <div class="spine-stat-label">Reviews</div>
       </div>
+
       <div class="spine-stat">
         <div class="spine-stat-num">{{ personal_lists|length }}</div>
         <div class="spine-stat-label">Lists</div>
       </div>
+
       <a href="{% url 'index' %}" class="back-link">Back to Home</a>
     </aside>
+
     <main class="profile-content">
+
       <div class="clubs-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -46,15 +56,20 @@
             <div class="section-title">Clubs</div>
           </div>
         </div>
+
         {% if clubs %}
-        {% for club in clubs %}
-        <div class="club-item">{{ club.name }}</div>
-        {% endfor %}
+          {% for club in clubs %}
+          <div class="club-item">
+            <a href="{% url 'club_detail' club.id %}">{{ club.name }}</a>
+          </div>
+          {% endfor %}
         {% else %}
-        <div class="empty-state">No clubs yet.</div>
+          <div class="empty-state">No clubs yet.</div>
         {% endif %}
       </div>
+
       <div class="ornament-divider">✦</div>
+
       <div class="books-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -63,21 +78,30 @@
             <div class="section-title">Favourite Books</div>
           </div>
         </div>
+
         {% if favourites %}
-        {% for favourite in favourites %}
-        <div class="book-item">
-          <div>
-            <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">{{ favourite.book.title
-              }}</a>
-            <div>{{ favourite.book.author }}</div>
-          </div>
-        </div>
-        {% endfor %}
+        <ul class="books-list">
+          {% for favourite in favourites %}
+          <li class="book-item">
+            <span class="book-num">{{ forloop.counter }}</span>
+            <div class="book-spine-color"></div>
+            <div class="book-info">
+              <a href="{% url 'book_view' favourite.book.hardcover_id %}" class="book-title-link">
+                {{ favourite.book.title }}
+              </a>
+              <div class="book-author">{{ favourite.book.author }}</div>
+            </div>
+            <span class="book-heart">♥</span>
+          </li>
+          {% endfor %}
+        </ul>
         {% else %}
-        <div class="empty-state">No favourites yet.</div>
+          <div class="empty-state">No favourites yet.</div>
         {% endif %}
       </div>
+
       <div class="ornament-divider">✦</div>
+
       <div class="reviews-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -86,21 +110,24 @@
             <div class="section-title">Reviews</div>
           </div>
         </div>
+
         {% if reviews %}
-        {% for review in reviews %}
-        <div class="book-item">
-          <div>
-            <strong>{{ review.book.title }}</strong>
-            <div>★ {{ review.rating }}/5</div>
-            <div>{{ review.comment }}</div>
+          {% for review in reviews %}
+          <div class="book-item">
+            <div>
+              <strong>{{ review.book.title }}</strong>
+              <div>★ {{ review.rating }}/5</div>
+              <div>{{ review.comment }}</div>
+            </div>
           </div>
-        </div>
-        {% endfor %}
+          {% endfor %}
         {% else %}
-        <div class="empty-state">No reviews yet.</div>
+          <div class="empty-state">No reviews yet.</div>
         {% endif %}
       </div>
+
       <div class="ornament-divider">✦</div>
+
       <div class="lists-section">
         <div class="section-header">
           <div class="section-icon"></div>
@@ -109,6 +136,7 @@
             <div class="section-title">Reading Lists</div>
           </div>
         </div>
+
         {% if personal_lists or club_lists %}
         <ul class="lists-list">
           {% for list in personal_lists %}
@@ -130,180 +158,80 @@
           <p>No lists yet.</p>
         </div>
         {% endif %}
-        {% if club_lists %}
-        <div style="margin-top: 20px;">
-          <div class="list-add-book-label" style="margin-bottom:10px;">Club Lists</div>
-          <div class="list-cards">
-            {% for lst in club_lists %}
-            <div class="list-card" id="list-card-club-{{ lst.id }}">
-              <div class="list-card-header" onclick="toggleListCard('club-{{ lst.id }}')">
-                <div class="list-card-header-left">
-                  <div class="list-card-name">{{ lst.name }}</div>
-                  <div class="list-card-meta">{{ lst.club.name }} · {{ lst.books.count }} book{{
-                    lst.books.count|pluralize }}</div>
-                </div>
-                <span class="list-card-chevron">▼</span>
-              </div>
-              <div class="list-card-body">
-                {% if lst.description %}
-                <p class="list-description">{{ lst.description }}</p>
-                {% endif %}
-                <div class="list-books">
-                  {% for book in lst.books.all %}
-                  <div class="list-book-item">
-                    <div class="list-book-info">
-                      <a href="{% url 'book_view' book.hardcover_id %}">{{ book.title }}</a>
-                      <div class="list-book-author">{{ book.author }}</div>
-                    </div>
-                  </div>
-                  {% empty %}
-                  <div class="list-empty-books">No books in this list yet.</div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
+
         {% if is_owner %}
         <button class="create-list-btn" onclick="openCreateModal()">
           <span class="plus-icon">+</span> New List
         </button>
         {% endif %}
       </div>
+
     </main>
   </div>
 </div>
+
 {% if is_owner %}
 <div class="modal-overlay" id="create-list-modal" onclick="handleModalOverlayClick(event)">
   <div class="modal-box">
     <button class="modal-close" onclick="closeCreateModal()">✕</button>
     <div class="modal-title">New Reading List</div>
+
     <form method="post" action="{% url 'create_list' %}">
       {% csrf_token %}
+
       <div class="modal-field">
         <label class="modal-label" for="modal-list-name">List Name</label>
-        <input type="text" id="modal-list-name" name="name" class="modal-input" placeholder="e.g. Summer Reads" required
-          autocomplete="off">
+        <input
+          type="text"
+          id="modal-list-name"
+          name="name"
+          class="modal-input"
+          placeholder="e.g. Summer Reads"
+          required
+          autocomplete="off"
+        >
       </div>
+
       <div class="modal-field">
-        <label class="modal-label" for="modal-list-desc">Description <span style="opacity:.4">(optional)</span></label>
-        <textarea id="modal-list-desc" name="description" class="modal-textarea"
-          placeholder="What's this list about?"></textarea>
+        <label class="modal-label" for="modal-list-desc">
+          Description <span style="opacity:.4">(optional)</span>
+        </label>
+        <textarea
+          id="modal-list-desc"
+          name="description"
+          class="modal-textarea"
+          placeholder="What's this list about?"
+        ></textarea>
       </div>
+
       <button type="submit" class="modal-submit-btn">Create List</button>
     </form>
   </div>
 </div>
-{% endif %}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script>
-  function toggleListCard(id) {
-    const card = document.getElementById('list-card-' + id);
-    card.classList.toggle('open');
-  }
   function openCreateModal() {
     document.getElementById('create-list-modal').classList.add('active');
     document.getElementById('modal-list-name').focus();
   }
+
   function closeCreateModal() {
     document.getElementById('create-list-modal').classList.remove('active');
   }
+
   function handleModalOverlayClick(e) {
     if (e.target === document.getElementById('create-list-modal')) {
       closeCreateModal();
     }
   }
+
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeCreateModal();
-  });
-  function escapeHtml(text) {
-    return $('<div>').text(text || '').html();
-  }
-  function searchBooks(listId) {
-    const query = $('#search-input-' + listId).val().trim();
-    const $results = $('#search-results-' + listId);
-    const $status = $('#search-status-' + listId);
-    const $preview = $('#selected-preview-' + listId);
-    const $addBtn = $('#add-btn-' + listId);
-    const $hiddenId = $('#selected-book-id-' + listId);
-    $results.empty();
-    $preview.hide();
-    $addBtn.prop('disabled', true);
-    $hiddenId.val('');
-    if (!query) {
-      $status.text('Please enter a title or author.');
-      return;
-    }
-    $status.text('Searching…');
-    $.ajax({
-      url: "{% url 'search_json' %}",
-      method: 'GET',
-      data: { query: query },
-      success: function (response) {
-        $status.text('');
-        const books = (response.books || []).slice(0, 10);
-        if (!books.length) {
-          $results.html('<div class="list-empty-books">No results found.</div>');
-          return;
-        }
-        let html = '';
-        books.forEach(function (book) {
-          const title = escapeHtml(book.title || 'Untitled');
-          const authors = escapeHtml((book.authors || []).join(', '));
-          const workid = escapeHtml(book.workid || '');
-          const cover = book.cover
-            ? `<img src="${escapeHtml(book.cover)}" class="list-result-cover" alt="">`
-            : `<div class="list-result-cover"></div>`;
-          html += `
-          <div class="list-result-item"
-               data-workid="${workid}"
-               data-title="${title}"
-               data-authors="${authors}"
-               data-listid="${listId}"
-               onclick="selectBook(this)">
-            ${cover}
-            <div>
-              <div class="list-result-title">${title}</div>
-              <div class="list-result-author">${authors || 'Unknown author'}</div>
-            </div>
-          </div>`;
-        });
-        $results.html(html);
-      },
-      error: function () {
-        $status.text('Search failed. Please try again.');
-      }
-    });
-  }
-  function selectBook(el) {
-    const listId = el.dataset.listid;
-    const workid = el.dataset.workid;
-    const title = el.dataset.title;
-    const authors = el.dataset.authors;
-    $('#selected-book-id-' + listId).val(workid);
-    $('#selected-preview-' + listId)
-      .text('Selected: ' + title + (authors ? ' — ' + authors : ''))
-      .show();
-    $('#add-btn-' + listId).prop('disabled', false);
-    $('#search-results-' + listId + ' .list-result-item').removeClass('selected');
-    $(el).addClass('selected');
-  }
-  $(document).on('input', '.list-search-input', function () {
-    const listId = this.id.replace('search-input-', '');
-    $('#selected-book-id-' + listId).val('');
-    $('#selected-preview-' + listId).hide();
-    $('#add-btn-' + listId).prop('disabled', true);
-    $('#search-results-' + listId + ' .list-result-item').removeClass('selected');
-  });
-  $(document).on('keypress', '.list-search-input', function (e) {
-    if (e.which === 13) {
-      e.preventDefault();
-      const listId = this.id.replace('search-input-', '');
-      searchBooks(listId);
+    if (e.key === 'Escape') {
+      closeCreateModal();
     }
   });
 </script>
+{% endif %}
+
 {% endblock %}
 {% endblock %}
