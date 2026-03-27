@@ -96,7 +96,7 @@ def delete_list(request, list_id):
     if request.method == 'POST':
         list_obj.delete()
         messages.success(request, "List deleted.")
-        return redirect('profile')
+        return redirect('my_profile')
 
     return render(request, 'lists/delete_list.html', {
         'list': list_obj,
